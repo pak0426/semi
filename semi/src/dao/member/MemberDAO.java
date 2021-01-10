@@ -1,5 +1,5 @@
 
-package dao.main;
+package dao.member;
 
 public class MemberDAO {
 

@@ -1,6 +1,11 @@
 <%@ page  contentType="text/html;charset=utf-8"  pageEncoding = "utf-8" %>
 <%@ include file="/views/inc/head.jsp"%>
+<%@ page import="dao.mybatis.SqlSessionManager" %>
 <!doctype html>
+<%
+	SqlSessionManager.getInstance();
+
+%>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -10,6 +15,7 @@
     <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
 
     <title>login Form</title>
+    
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
 

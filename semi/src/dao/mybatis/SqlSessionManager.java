@@ -15,7 +15,7 @@ public class SqlSessionManager {
 	public static SqlSessionFactory getInstance() {
 		
 		try {
-			String resource = "/dao/mybatis/mybatisConfig.xml";
+			String resource = "/dao/mybatis/mybatis-config.xml";
 			InputStream inputStream = Resources.getResourceAsStream(resource);
 			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 			

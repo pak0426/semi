@@ -1,10 +1,32 @@
 <%@ page  contentType="text/html;charset=utf-8"  pageEncoding = "utf-8" %>
-<%@ include file="/views/inc/head.jsp"%>
+<%@page import="java.util.*"%>
+<%@page import="org.apache.ibatis.session.SqlSession"%>
+<%@page import="org.apache.ibatis.session.SqlSessionFactory"%>
 <%@ page import="dao.mybatis.SqlSessionManager" %>
+<%@ include file="/views/inc/head.jsp"%>
 <!doctype html>
 <%
-	SqlSessionManager.getInstance();
+// 	SqlSessionManager.getInstance();
 
+	SqlSessionFactory sqlSessionFactory = SqlSessionManager.getInstance();
+	SqlSession sqlSession = sqlSessionFactory.openSession();
+	
+	try {
+		
+		List list = sqlSession.selectList("Webtoon.getWebtoonList");
+		
+		HashMap rtnMap = new HashMap();
+		
+		if(list.size() > 0){
+			for(int i=0; i<list.size(); i++){
+				rtnMap = (HashMap)list.get(i);
+			}
+		}
+		
+// 		out.println("WEBTOON_SUMMARY" + rtnMap.get("WEBTOON_SUMMARY"));
+	}catch(Exception e){
+		e.printStackTrace();
+	}
 %>
 <html lang="en">
   <head>
@@ -33,6 +55,7 @@
       <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           <h1 class="text-center">Login</h1>
+          <h1>예지룽 사랑해용❤❤❤❤</h1>
       </div>
       <div class="modal-body">
           <form class="form col-md-12 center-block">

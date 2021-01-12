@@ -19,10 +19,8 @@ public class SqlSessionManager {
 			InputStream inputStream = Resources.getResourceAsStream(resource);
 			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 			
-			System.out.println("SqlSession Connect Success");
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("SqlSession Connect Fail");
 		}
 		
 		

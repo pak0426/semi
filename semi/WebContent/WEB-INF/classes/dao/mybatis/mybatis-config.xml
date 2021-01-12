@@ -28,7 +28,7 @@
 		</environment>
 	</environments>
 	<mappers>
-<!-- 		<mapper resource="/dao/sqlMap/Member.xml"/> -->
 		<mapper resource="dao/mybatis/sqlMap/Webtoon.xml"/>
+		<mapper resource="dao/mybatis/sqlMap/Member.xml"/>
 	</mappers>
 </configuration>

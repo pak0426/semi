@@ -13,7 +13,8 @@
 	
 	try {
 		
-		List list = sqlSession.selectList("Webtoon.getWebtoonList");
+// 		List list = sqlSession.selectList("Webtoon.getWebtoonList");
+		List list = sqlSession.selectList("Member.getMemberList");
 		
 		HashMap rtnMap = new HashMap();
 		
@@ -54,8 +55,7 @@
   <div class="modal-content">
       <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h1 class="text-center">Login</h1>
-          <h1>예지룽 사랑해용❤❤❤❤</h1>
+          <h1 class="text-center">Login</h1>          
       </div>
       <div class="modal-body">
           <form class="form col-md-12 center-block">
@@ -67,7 +67,7 @@
             </div>
             <div class="form-group">
               <button class="btn btn-primary btn-lg btn-block">Sign In</button>
-              <span class="pull-right"><a href="#">Register</a></span><span><a href="#">Need help?</a></span>
+              <span class="pull-right"><a href="">Register</a></span><span><a href="#">Need help?</a></span>
             </div>
           </form>
       </div>

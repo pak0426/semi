@@ -6,6 +6,6 @@ public class WebtoonDAO {
 	private SqlSession sqlSession;
 	
 	public WebtoonDAO() {
-		String resource = "";
+		
 	}
 }

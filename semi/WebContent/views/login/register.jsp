@@ -1,8 +1,11 @@
 <%@page import="java.util.HashMap"%>
 <%@ page  contentType="text/html;charset=utf-8"  pageEncoding = "utf-8" %>
 <%@ page import="dao.member.MemberDAO"%>
+<%-- <%@ include file="/views/inc/head.jsp"%> --%>
 
 <%
+	request.setCharacterEncoding("UTF-8");
+
 	MemberDAO memberDAO = new MemberDAO();
 
 
@@ -10,10 +13,39 @@
 %>
 <!DOCTYPE html>
 <html>
+<script src="/res/js/jquery-3.5.1.min.js"></script>
+<script type="text/javascript">
+	var setCount = 0;
+	function setForm(){
+		var test = $("form[name=registerForm]").serialize();
+		
+		console.log(test);
+		
+		setCount ++
+		$.ajax({
+			 type : 'post'
+			,url : './register_action.jsp'
+			,data : $("form[name=registerForm]").serialize()
+			,dataType : 'json'
+			,success : function(result){
+// 				alert("success");
+				location.href = "./register_action.jsp";
+			}
+			,error : function(xhr, status, error){
+				alert("FAIL");
+				location.reload();
+			}
+		});
+	}
+
+</script>
 <head>
+<link href="http://netdna.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+<link rel="shortcut icon" href="">
+
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link href="http://netdna.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
 <!-- <link type="text/css" rel="stylesheet" href="/res/css/bootstrap.map.css"> -->
 <!-- <link type="text/css" rel="stylesheet" href="/res/css/bootstrap.min.css"> -->
 <style type="text/css">
@@ -57,26 +89,26 @@ body{
 						<div class="card">
 							<div class="card-body">
 								<div class="m-sm-4">
-									<form>
+									<form id="registerForm" name="registerForm" action="./register_action.jsp">
 										<div class="form-group">
-											<label>Name</label>
-											<input class="form-control form-control-lg" type="text" name="name" placeholder="Enter your name">
+											<label>이름</label>
+											<input class="form-control form-control-lg" type="text" id="name" name="name" placeholder="Enter your name">
 										</div>
 										<div class="form-group">
 											<label>ID</label>
-											<input class="form-control form-control-lg" type="text" name="company" placeholder="Enter your company name">
+											<input class="form-control form-control-lg" type="text" id="id" name="id" placeholder="Enter your id">
 										</div>
 										<div class="form-group">
 											<label>Email</label>
-											<input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email">
+											<input class="form-control form-control-lg" type="email" id="email" name="email" placeholder="Enter your email">
 										</div>
 										<div class="form-group">
 											<label>Password</label>
-											<input class="form-control form-control-lg" type="password" name="password" placeholder="Enter password">
+											<input class="form-control form-control-lg" type="password" id="password" name="password" placeholder="Enter password">
 										</div>
 										<div class="text-center mt-3">
 <!-- 											<a href="index.html" class="btn btn-lg btn-primary">Sign up</a> -->
-											<button type="submit" class="btn btn-lg btn-primary">Sign up</button>
+											<button type="button" class="btn btn-lg btn-primary" onclick="setForm();">Sign up</button>
 										</div>
 									</form>
 								</div>

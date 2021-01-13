@@ -9,5 +9,9 @@
 	FROM
 	MEMBER
 	</select>
+	
+	<insert id="" parameterType="MemberDTO">
+	
+	</insert>
 
 </mapper>

@@ -13,29 +13,53 @@
 %>
 <!DOCTYPE html>
 <html>
-<script src="/res/js/jquery-3.5.1.min.js"></script>
+<script src="/res/js/jquery.1.12.4.js"></script>
 <script type="text/javascript">
 	var setCount = 0;
 	function setForm(){
-		var test = $("form[name=registerForm]").serialize();
 		
-		console.log(test);
+// 		if($("#name").val() == ""){
+// 			alert("이름을 입력해주세요.");
+// 			$("#name").focus();
+// 			return false;
+// 		}
+// 		if($("#id").val() == ""){
+// 			alert("id를 입력해주세요.");
+// 			$("#id").focus();
+// 			return false;
+// 		}
+// 		if($("#email").val() == ""){
+// 			alert("이메일을 입력해주세요.");
+// 			$("#email").focus();
+// 			return false;
+// 		}
+// 		if($("#password").val() == ""){
+// 			alert("비밀번호를 입력해주세요.");
+// 			$("#password").focus();
+// 			return false;
+// 		}
+			
 		
-		setCount ++
-		$.ajax({
-			 type : 'post'
-			,url : './register_action.jsp'
-			,data : $("form[name=registerForm]").serialize()
-			,dataType : 'json'
-			,success : function(result){
-// 				alert("success");
-				location.href = "./register_action.jsp";
-			}
-			,error : function(xhr, status, error){
-				alert("FAIL");
-				location.reload();
-			}
-		});
+// 		if(setCount > 0){
+			$.ajax({
+				 type : "POST"
+				,url : "./register_action.jsp"
+				,data : $("form[name=registerForm]").serialize()
+				,dataType : "json"
+				,success : function(result){
+					alert(result.msg);
+// 					location.href = "./login.jsp";					
+				}
+				,error : function(request, status, error){
+					alert(request + ":" + error);
+					setCount = 0;
+					return false;
+				}
+			});			
+// 		}
+// 		else{
+// 			alert("처리중입니다.");
+// 		}
 	}
 
 </script>
@@ -89,7 +113,7 @@ body{
 						<div class="card">
 							<div class="card-body">
 								<div class="m-sm-4">
-									<form id="registerForm" name="registerForm" action="./register_action.jsp">
+									<form id="registerForm" name="registerForm" method="post">
 										<div class="form-group">
 											<label>이름</label>
 											<input class="form-control form-control-lg" type="text" id="name" name="name" placeholder="Enter your name">
@@ -106,11 +130,11 @@ body{
 											<label>Password</label>
 											<input class="form-control form-control-lg" type="password" id="password" name="password" placeholder="Enter password">
 										</div>
+									</form>
 										<div class="text-center mt-3">
 <!-- 											<a href="index.html" class="btn btn-lg btn-primary">Sign up</a> -->
 											<button type="button" class="btn btn-lg btn-primary" onclick="setForm();">Sign up</button>
 										</div>
-									</form>
 								</div>
 							</div>
 						</div>

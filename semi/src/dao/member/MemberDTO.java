@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class MemberDTO {
 	private int 	member_idx;
+	private String 	member_type;
 	private String 	member_id;
 	private String 	member_pw;
 	private String 	member_name;
@@ -15,11 +16,18 @@ public class MemberDTO {
 	private String	use_yn;
 	private int		dp_cnt;
 	
+	
 	public int getMember_idx() {
 		return member_idx;
 	}
 	public void setMember_idx(int member_idx) {
 		this.member_idx = member_idx;
+	}
+	public String getMember_type() {
+		return member_type;
+	}
+	public void setMember_type(String member_type) {
+		this.member_type = member_type;
 	}
 	public String getMember_id() {
 		return member_id;
@@ -81,4 +89,6 @@ public class MemberDTO {
 	public void setDp_cnt(int dp_cnt) {
 		this.dp_cnt = dp_cnt;
 	}
+	
+	
 }

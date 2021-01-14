@@ -1,65 +1,58 @@
 <%@page import="java.util.HashMap"%>
 <%@ page  contentType="text/html;charset=utf-8"  pageEncoding = "utf-8" %>
 <%@ page import="dao.member.MemberDAO"%>
+<%@ include file="/views/inc/common.jsp"%>
 <%-- <%@ include file="/views/inc/head.jsp"%> --%>
 
 <%
-	request.setCharacterEncoding("UTF-8");
+	
 
 	MemberDAO memberDAO = new MemberDAO();
-
-
-
+	
+	String type = request.getParameter("type");
+	String isOk = request.getParameter("isOk");
+	
 %>
 <!DOCTYPE html>
 <html>
-<script src="/res/js/jquery.1.12.4.js"></script>
 <script type="text/javascript">
+	var type = "<%=type %>"; 
+	var isOk = "<%=isOk %>"; 
+	
+	$(document).ready(function(){
+		if(isOk == "N"){
+			alert("등록하는데 문제가 발생했습니다.");
+		}
+		if(type="A" && isOk == "N"){
+			alert("이미 사용 중인 ID입니다.");
+		}
+	});
+
 	var setCount = 0;
 	function setForm(){
 		
-// 		if($("#name").val() == ""){
-// 			alert("이름을 입력해주세요.");
-// 			$("#name").focus();
-// 			return false;
-// 		}
-// 		if($("#id").val() == ""){
-// 			alert("id를 입력해주세요.");
-// 			$("#id").focus();
-// 			return false;
-// 		}
-// 		if($("#email").val() == ""){
-// 			alert("이메일을 입력해주세요.");
-// 			$("#email").focus();
-// 			return false;
-// 		}
-// 		if($("#password").val() == ""){
-// 			alert("비밀번호를 입력해주세요.");
-// 			$("#password").focus();
-// 			return false;
-// 		}
+		if($("#name").val() == ""){
+			alert("이름을 입력해주세요.");
+			$("#name").focus();
+			return false;
+		}
+		if($("#id").val() == ""){
+			alert("id를 입력해주세요.");
+			$("#id").focus();
+			return false;
+		}
+		if($("#email").val() == ""){
+			alert("이메일을 입력해주세요.");
+			$("#email").focus();
+			return false;
+		}
+		if($("#password").val() == ""){
+			alert("비밀번호를 입력해주세요.");
+			$("#password").focus();
+			return false;
+		}
 			
-		
-// 		if(setCount > 0){
-			$.ajax({
-				 type : "POST"
-				,url : "./register_action.jsp"
-				,data : $("form[name=registerForm]").serialize()
-				,dataType : "json"
-				,success : function(result){
-					alert(result.msg);
-// 					location.href = "./login.jsp";					
-				}
-				,error : function(request, status, error){
-					alert(request + ":" + error);
-					setCount = 0;
-					return false;
-				}
-			});			
-// 		}
-// 		else{
-// 			alert("처리중입니다.");
-// 		}
+		$("#registerForm").submit();
 	}
 
 </script>
@@ -113,7 +106,7 @@ body{
 						<div class="card">
 							<div class="card-body">
 								<div class="m-sm-4">
-									<form id="registerForm" name="registerForm" method="post">
+									<form id="registerForm" name="registerForm" action="./register_action.jsp" method="post">
 										<div class="form-group">
 											<label>이름</label>
 											<input class="form-control form-control-lg" type="text" id="name" name="name" placeholder="Enter your name">
@@ -132,8 +125,8 @@ body{
 										</div>
 									</form>
 										<div class="text-center mt-3">
-<!-- 											<a href="index.html" class="btn btn-lg btn-primary">Sign up</a> -->
-											<button type="button" class="btn btn-lg btn-primary" onclick="setForm();">Sign up</button>
+											<button type="button" class="btn btn-lg btn-default" onclick="location.href='./login.jsp'">back to home</button>
+											<button type="submit" class="btn btn-lg btn-primary" onclick="setForm();">Sign up</button>
 										</div>
 								</div>
 							</div>

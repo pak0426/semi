@@ -4,32 +4,21 @@
 <%@page import="org.apache.ibatis.session.SqlSessionFactory"%>
 <%@ page import="dao.mybatis.SqlSessionManager" %>
 <%@ include file="/views/inc/head.jsp"%>
+<%@ include file="/views/inc/common.jsp"%>
 <!doctype html>
 <%
-// 	SqlSessionManager.getInstance();
-
-	SqlSessionFactory sqlSessionFactory = SqlSessionManager.getInstance();
-	SqlSession sqlSession = sqlSessionFactory.openSession();
-	
-	try {
-		
-// 		List list = sqlSession.selectList("Webtoon.getWebtoonList");
-		List list = sqlSession.selectList("Member.getMemberList");
-		
-		HashMap rtnMap = new HashMap();
-		
-		if(list.size() > 0){
-			for(int i=0; i<list.size(); i++){
-				rtnMap = (HashMap)list.get(i);
-			}
-		}
-		
-// 		out.println("WEBTOON_SUMMARY" + rtnMap.get("WEBTOON_SUMMARY"));
-	}catch(Exception e){
-		e.printStackTrace();
-	}
+	String isOk = request.getParameter("isOk");
 %>
 <html lang="en">
+<script type="text/javascript">
+	var isOk = "<%=isOk %>";
+	
+	$(document).ready(function(){
+		if(isOk == "Y"){
+			alert("등록에 성공하였습니다.");
+		}
+	});
+</script>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

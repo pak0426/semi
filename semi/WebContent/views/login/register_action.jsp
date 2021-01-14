@@ -1,7 +1,6 @@
 <%@page import="dao.member.MemberDTO"%>
 <%@page import="dao.member.MemberDAO"%>
 <%@page import="org.json.simple.JSONObject"%>
-<%@page import="java.util.HashMap"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%!
 	public void setReturn(String isOk, String msg, HttpServletResponse response) {
@@ -18,7 +17,7 @@
 %>
 <% 
 	//response
-	String msg = "";
+	String type = "";
 	String isOk = "";
 	
 	//parameter
@@ -30,18 +29,37 @@
 	//DTO
 	MemberDTO memberDTO = new MemberDTO();
 	
+	memberDTO.setMember_type("회원");
 	memberDTO.setMember_name(member_name);
 	memberDTO.setMember_id(member_id);
 	memberDTO.setMember_email(member_email);
 	memberDTO.setMember_pw(member_pw);
 	
-	//HashMap
 	
 	//DAO
 	MemberDAO memberDAO = new MemberDAO();
 	int result = memberDAO.setMember(memberDTO);
 	
-	out.println("result : " + result);
+	int chkMember = memberDAO.chkMember(memberDTO);
+	
+	//등록 후 Process
+	if(chkMember > 0){
+		//ID 중복시
+		type = "A";
+		isOk = "N";
+		response.sendRedirect("register.jsp?type=" + type + "&isOk=" + isOk);
+	}else{
+		if(result == 0){
+			//등록 실패시
+			isOk = "N";
+			response.sendRedirect("register.jsp?isOk=" + isOk);
+		}
+		else{
+			//등록 성공시
+			isOk = "Y";
+			response.sendRedirect("login.jsp?isOk=" + isOk);
+		}
+	}
 	
 	
 	

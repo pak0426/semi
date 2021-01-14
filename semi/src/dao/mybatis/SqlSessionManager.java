@@ -1,8 +1,7 @@
 package dao.mybatis;
 
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -10,22 +9,24 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 public class SqlSessionManager {
 	
-	public static SqlSessionFactory sqlSessionFactory;
+	public static SqlSessionFactory sqlSession;
 	
-	public static SqlSessionFactory getInstance() {
 		
-		try {
+		static {
 			String resource = "/dao/mybatis/mybatis-config.xml";
-			InputStream inputStream = Resources.getResourceAsStream(resource);
-			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 			
-		} catch (IOException e) {
-			e.printStackTrace();
+			Reader reader;
+			
+			try {
+				reader = Resources.getResourceAsReader(resource);
+				sqlSession = new SqlSessionFactoryBuilder().build(reader);
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
-		
-		return sqlSessionFactory;
-	}
-	
-	
+		public static SqlSessionFactory getSqlSession() {
+			return sqlSession;
+		}
 }

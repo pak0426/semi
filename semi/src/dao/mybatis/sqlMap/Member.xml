@@ -10,8 +10,36 @@
 	MEMBER
 	</select>
 	
-	<insert id="" parameterType="MemberDTO">
-	
+	<insert id="setMember" parameterType="Member">
+	INSERT INTO MEMBER
+	(
+	  MEMBER_IDX
+	 ,MEMBER_TYPE
+	 ,MEMBER_ID
+	 ,MEMBER_EMAIL
+	 ,MEMBER_PW
+	 ,MEMBER_NAME
+<!-- 	 ,IN_ADMIN -->
+	 ,IN_DATE
+	)
+	VALUES
+	(
+	 MEMBER_IDX_SEQ.NEXTVAL
+	 ,#{member_type}
+	 ,#{member_id}
+	 ,#{member_email}
+	 ,#{member_pw}
+	 ,#{member_name}
+<!-- 	 ,#{in_admin} -->
+	 ,SYSDATE
+	)
 	</insert>
+	
+	<select id="chkMember" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM MEMBER
+	WHERE MEMBER_ID = #{member_id}	
+	</select>
 
 </mapper>

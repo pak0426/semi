@@ -5,6 +5,5 @@
 <head>
 <link type="text/css" rel="stylesheet" href="/res/css/bootstrap.css">
 <link type="text/css" rel="stylesheet" href="/res/css/bootstrap.min.css">
-<link type="text/css" rel="stylesheet" href="/res/css/bootstrap.map.css">
 </head>
 </html>

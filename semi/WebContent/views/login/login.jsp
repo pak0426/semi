@@ -15,7 +15,8 @@
 	
 	$(document).ready(function(){
 		if(isOk == "Y"){
-			alert("등록에 성공하였습니다.");
+			alert("등록에 성공하였습니다. 로그인을 해주세요!");
+			location.href = "./login.jsp";
 		}
 	});
 </script>

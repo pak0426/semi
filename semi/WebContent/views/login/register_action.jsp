@@ -38,8 +38,8 @@
 	
 	//DAO
 	MemberDAO memberDAO = new MemberDAO();
-	int result = memberDAO.setMember(memberDTO);
 	
+	int result = 0;	
 	int chkMember = memberDAO.chkMember(memberDTO);
 	
 	//등록 후 Process
@@ -49,16 +49,10 @@
 		isOk = "N";
 		response.sendRedirect("register.jsp?type=" + type + "&isOk=" + isOk);
 	}else{
-		if(result == 0){
-			//등록 실패시
-			isOk = "N";
-			response.sendRedirect("register.jsp?isOk=" + isOk);
-		}
-		else{
-			//등록 성공시
-			isOk = "Y";
-			response.sendRedirect("login.jsp?isOk=" + isOk);
-		}
+		//등록 성공시
+		memberDAO.setMember(memberDTO);
+		isOk = "Y";
+		response.sendRedirect("login.jsp?isOk=" + isOk);
 	}
 	
 	

@@ -6,6 +6,7 @@
 
 <%
 	
+	
 
 	MemberDAO memberDAO = new MemberDAO();
 	
@@ -20,11 +21,9 @@
 	var isOk = "<%=isOk %>"; 
 	
 	$(document).ready(function(){
-		if(isOk == "N"){
-			alert("등록하는데 문제가 발생했습니다.");
-		}
 		if(type="A" && isOk == "N"){
 			alert("이미 사용 중인 ID입니다.");
+			location.href = "./register.jsp";
 		}
 	});
 

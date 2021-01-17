@@ -22,6 +22,11 @@ public class MemberDAO {
 		return null;
 	}
 	
+	/* method 	: setMember
+	 * param	: MemberDTO 
+	 * result	: int
+	 * desc		: 회원 등록 
+	 * */
 	public int setMember(MemberDTO memberDTO) {		
 		SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
 		SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -47,7 +52,11 @@ public class MemberDAO {
 		return result;
 	}
 	
-	
+	/* method 	: chkMember
+	 * param	: MemberDTO 
+	 * result	: int
+	 * desc		: DB에 아이디가 존재하는지 확인
+	 * */
 	public int chkMember(MemberDTO memberDTO) {
 		SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
 		SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -75,4 +84,36 @@ public class MemberDAO {
 		
 		return result;
 	}
+	
+	
+	/* method 	: chkPW
+	 * param	: MemberDTO 
+	 * result	: int
+	 * desc		: PW 중복 체크
+	 * */
+	public int chkPW(MemberDTO memberDTO) {
+		int result = 0;
+		
+		SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		
+		String target_name = "Member.chkPW";
+		
+		logger.debug("■ Target NameSpace : " + target_name);
+		
+		try {
+			result = sqlSession.selectOne(target_name, memberDTO);
+			
+			sqlSession.commit();			
+		}catch(Exception e) {
+			sqlSession.rollback();
+			
+			e.printStackTrace();
+		}finally {
+			sqlSession.close();
+		}
+		
+		return result;
+	}
+	
 }

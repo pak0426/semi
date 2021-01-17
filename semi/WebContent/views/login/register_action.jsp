@@ -1,3 +1,4 @@
+<%@page import="dao.common.CommonDAO"%>
 <%@page import="dao.member.MemberDTO"%>
 <%@page import="dao.member.MemberDAO"%>
 <%@page import="org.json.simple.JSONObject"%>
@@ -26,6 +27,8 @@
 	String member_email = request.getParameter("email");
 	String member_pw  = request.getParameter("password");
 	
+	
+	
 	//DTO
 	MemberDTO memberDTO = new MemberDTO();
 	
@@ -33,8 +36,12 @@
 	memberDTO.setMember_name(member_name);
 	memberDTO.setMember_id(member_id);
 	memberDTO.setMember_email(member_email);
-	memberDTO.setMember_pw(member_pw);
 	
+	//비밀번호 암호화
+	CommonDAO commonDAO = new CommonDAO();
+	member_pw = commonDAO.encryptSHA256(member_pw);
+	
+	memberDTO.setMember_pw(member_pw);
 	
 	//DAO
 	MemberDAO memberDAO = new MemberDAO();

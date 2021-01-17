@@ -5,9 +5,6 @@
 <%-- <%@ include file="/views/inc/head.jsp"%> --%>
 
 <%
-	
-	
-
 	MemberDAO memberDAO = new MemberDAO();
 	
 	String type = request.getParameter("type");

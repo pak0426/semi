@@ -41,5 +41,14 @@
 	FROM MEMBER
 	WHERE MEMBER_ID = #{member_id}	
 	</select>
+	
+	<select id="chkPW" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM MEMBER
+	WHERE MEMBER_ID = #{member_id}	
+	AND MEMBER_PW = #{member_pw}
+	</select>
+	
 
 </mapper>

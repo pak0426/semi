@@ -8,17 +8,59 @@
 <!doctype html>
 <%
 	String isOk = request.getParameter("isOk");
+	String type = request.getParameter("type");
+	
+	
 %>
 <html lang="en">
 <script type="text/javascript">
 	var isOk = "<%=isOk %>";
+	var type = "<%=type %>";
 	
 	$(document).ready(function(){
 		if(isOk == "Y"){
 			alert("등록에 성공하였습니다. 로그인을 해주세요!");
 			location.href = "./login.jsp";
+		}else{
+			if(type == "ID_ERROR") {
+				alert("ID가 존재하지 않습니다.");
+				location.href = "./login.jsp";
+			}
+			else if(type == "PW_ERROR"){
+				alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
+				location.href = "./login.jsp";
+			}
 		}
 	});
+	
+function setForm(){
+// 		if($("#id").val() == ""){
+// 			alert("ID를 입력해주세요.");
+// 			$("#id").focus();
+// 			return false;
+// 		}
+// 		if($("#password").val() == ""){
+// 			alert("비밀번호를 입력해주세요.");
+// 			$("#password").focus();
+// 			return false;
+// 		}
+		
+// 		$.ajax({
+// 			 type : "post"
+// 			,url : "login_action.jsp"
+// 			,data : $("form[name=loginForm]").serialize()
+// 			,dataType : "json"
+// 			,success : function(result){
+// 				console.log(result);
+// 				location.href = "./login_action.jsp";
+// 			}
+// 			,error(xhr, status, error){
+// 				alert("데이터를 전송하는데 오류가 발생했습니다.");
+// 			}
+// 		});
+		$("#loginForm").submit();
+		
+	}
 </script>
   <head>
     <meta charset="utf-8">
@@ -26,6 +68,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 
     <title>login Form</title>
     
@@ -48,15 +91,15 @@
           <h1 class="text-center">Login</h1>          
       </div>
       <div class="modal-body">
-          <form class="form col-md-12 center-block">
+          <form class="form col-md-12 center-block" id="loginForm" name="loginForm" action="./login_action.jsp" method="post">
             <div class="form-group">
-              <input type="text" class="form-control input-lg" placeholder="Email">
+              <input type="text" class="form-control input-lg" placeholder="ID" id="id" name="id">
             </div>
             <div class="form-group">
-              <input type="password" class="form-control input-lg" placeholder="Password">
+              <input type="password" class="form-control input-lg" placeholder="Password" id="password" name="password">
             </div>
             <div class="form-group">
-              <button class="btn btn-primary btn-lg btn-block">Sign In</button>
+              <button type="button" class="btn btn-primary btn-lg btn-block" onclick="setForm();">Sign In</button>
               <span class="pull-right"><a href="./register.jsp">Register</a></span><span><a href="#">Need help?</a></span>
             </div>
           </form>

@@ -1,17 +1,25 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/views/inc/common.jsp"%>
 <%	
-	
-	out.println("ID : " + request.getSession().getAttribute("LOGIN_ID"));
-	out.println("<br/>");
-	out.println("STATUS : " + request.getSession().getAttribute("LOGIN_STATUS"));
-	
-	
+	String session_login_id = "";
+	String session_login_status = "";
+
+	if(request.getSession().getAttribute("LOGIN_ID") != null && request.getSession().getAttribute("LOGIN_STATUS") != null){
+		session_login_id = (String) request.getSession().getAttribute("LOGIN_ID");	
+		session_login_status = (String) request.getSession().getAttribute("LOGIN_STATUS");
+		
+		if(session_login_status.equals("Y")){
+			//${}에 저장해준다. 
+			request.setAttribute("session_login_id", session_login_id);
+			request.setAttribute("session_login_status", session_login_status);
+		}
+	}
 %>
+
 <!DOCTYPE html>
 <html>
 <link href="http://netdna.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+<link type="text/css" rel="stylesheet" href="/res/css/base.css">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -87,11 +95,14 @@ text-decoration:none;
 </head>
 <body>
 <hr>
-<div class="container bootstrap snippets bootdey">
+<div class="container bootstrap snippets bootdey m-auto">
+	<%@ include file="../inc/top.jsp" %>
     <div class="row">
         <div class="col-lg-12">
-        	<button type="submit" class="btn btn-lg btn-primary" onclick="logOut();" style="position : right">logOut</button>
-            <div class="main-box no-header clearfix">
+        	<div class="btn-wrap text-right pb-3">
+	        	<button type="submit" class="btn btn-lg btn-primary" onclick="location.href='./write.jsp'">글 작성</button>
+        	</div>
+            <div class="main-box clearfix">
                 <div class="main-box-body clearfix">
                     <div class="table-responsive" >
                         <table class="table user-list">
@@ -100,7 +111,7 @@ text-decoration:none;
                                 <th><span>글 번호</span></th>
                                 <th><span>글 제목</span></th>
                                 <th><span>Created</span></th>
-                                <th class="text-center"><span>Status</span></th>
+                                <th><span>Status</span></th>
                                 <th><span>Email</span></th>
                                 <th>&nbsp;</th>
                                 </tr>
@@ -113,7 +124,7 @@ text-decoration:none;
                                         <span class="user-subhead">Member</span>
                                     </td>
                                     <td>2013/08/12</td>
-                                    <td class="text-center">
+                                    <td>
                                         <span class="label label-default">pending</span>
                                     </td>
                                     <td>

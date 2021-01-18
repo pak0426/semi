@@ -34,16 +34,16 @@
 	});
 	
 function setForm(){
-// 		if($("#id").val() == ""){
-// 			alert("ID를 입력해주세요.");
-// 			$("#id").focus();
-// 			return false;
-// 		}
-// 		if($("#password").val() == ""){
-// 			alert("비밀번호를 입력해주세요.");
-// 			$("#password").focus();
-// 			return false;
-// 		}
+		if($("#id").val() == ""){
+			alert("ID를 입력해주세요.");
+			$("#id").focus();
+			return false;
+		}
+		if($("#password").val() == ""){
+			alert("비밀번호를 입력해주세요.");
+			$("#password").focus();
+			return false;
+		}
 		
 // 		$.ajax({
 // 			 type : "post"

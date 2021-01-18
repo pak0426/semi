@@ -78,10 +78,6 @@ public class MemberDAO {
 		}finally {
 			sqlSession.close();
 		}
-		
-		System.out.println("chkMember : " + result);
-		System.out.println(memberDTO);
-		
 		return result;
 	}
 	

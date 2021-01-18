@@ -16,8 +16,6 @@ public class CommonDAO {
 				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
 			}
 			sha = sb.toString();
-			
-			System.out.println("Encrypt pw : " + sha);
 		}catch(NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			System.out.println("Encrypt Error - NoSuchAlgorithmException");

@@ -10,14 +10,25 @@
 
 	<div class="ui_menu">
 		<ul>
-			<c:choose>
-				<c:when test="${session_login_status eq 'Y'}">
-					<li class="out"><a onclick="logout_inc('${session_login_id }');" href="javascript:;">로그아웃</a></li>
-				</c:when>
-				<c:otherwise>
-					<li class="out"><a onclick="location.href = '/views/login/login.jsp'" href="javascript:;">로그인</a></li>	
-				</c:otherwise>
-			</c:choose>
+<%-- 			<c:choose> --%>
+<%-- 				<c:when test="${session_login_status eq 'Y'}"> --%>
+<%-- 					<li class="out"><a onclick="logout_inc('${session_login_id }');" href="javascript:;">로그아웃</a></li> --%>
+<%-- 				</c:when> --%>
+<%-- 				<c:otherwise> --%>
+<!-- 					<li class="out"><a onclick="location.href = '/views/login/login.jsp'" href="javascript:;">로그인</a></li>	 -->
+<%-- 				</c:otherwise> --%>
+<%-- 			</c:choose> --%>
+<%
+if(session_login_status.equals("Y")){
+%>	
+			<li class="out"><a onclick="logout_inc('<%=session_login_id %>');" href="javascript:;">로그아웃</a></li>
+<%
+}else{
+%>		
+			<li class="out"><a onclick="location.href = '/views/login/login.jsp'" href="javascript:;">로그인</a></li>
+<%
+}
+%>
 		</ul>
 		<button type="button" class="login">${session_login_id }</button>
 	</div>

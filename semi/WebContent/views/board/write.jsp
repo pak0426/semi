@@ -1,19 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/views/inc/common.jsp"%>
-<%	
-String session_login_id = "";
-String session_login_status = "";
+<%
 
-if(request.getSession().getAttribute("LOGIN_ID") != null && request.getSession().getAttribute("LOGIN_STATUS") != null){
-	session_login_id = (String) request.getSession().getAttribute("LOGIN_ID");	
-	session_login_status = (String) request.getSession().getAttribute("LOGIN_STATUS");
-	
-	if(session_login_status.equals("Y")){
-		//${}에 저장해준다. 
-		request.setAttribute("session_login_id", session_login_id);
-		request.setAttribute("session_login_status", session_login_status);
-	}
-}
+
 %>
 <!DOCTYPE html>
 <html>

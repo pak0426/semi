@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/views/inc/common.jsp"%>
 <%
-
+	String session_login_id = (String) request.getSession().getAttribute("LOGIN_ID");	
+	String session_login_status = (String) request.getSession().getAttribute("LOGIN_STATUS");
 
 %>
 <!DOCTYPE html>
@@ -49,14 +50,14 @@ img {
 <script type="text/javascript">
 	function setForm(){
 		console.log("test");
-// 		if($("#board_title").val() == ""){
+// 		if($("#webtoon_title").val() == ""){
 // 			alert("제목을 입력해주세요.");
-// 			$("#board_title").focus();
+// 			$("#webtoon_title").focus();
 // 			return false;
 // 		}
-// 		if($("#board_content").val() == ""){
+// 		if($("#webtoon_content").val() == ""){
 // 			alert("내용을 입력해주세요.");
-// 			$("#board_content").focus();
+// 			$("#webtoon_content").focus();
 // 			return false;
 // 		}
 			
@@ -76,20 +77,20 @@ img {
 	            <form class="form-horizontal" id="writeForm" name="writeForm" action="./write_action.jsp" method="post">
 	                <hr class="my-4" />
 	                <div class="form-group">
-                        <label for="board_title">제목</label>
-                        <input type="text" class="form-control" id="board_title" name="board_title"/>
+                        <label for="webtoon_title">제목</label>
+                        <input type="text" class="form-control" id="webtoon_title" name="webtoon_title"/>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">요약</label>
-                        <textarea rows="" cols="" class="form-control" id="board_summary" name="board_summary"></textarea>
+                        <textarea rows="" cols="" class="form-control" id="webtoon_summary" name="webtoon_summary"></textarea>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">내용</label>
-                        <textarea rows="" cols="" class="form-control" id="board_content" name="board_content"></textarea>
+                        <textarea rows="" cols="" class="form-control" id="webtoon_content" name="webtoon_content"></textarea>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">작성자</label>
-                        <input type="text" class="form-control" id="board_author" name="board_author"/>
+                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author"/>
 	                </div>
 	                <div class="form-group">
 	                	<label for="firstname">썸네일 이미지</label>

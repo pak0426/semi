@@ -10,5 +10,30 @@
 	FROM
 	NEW_REVIEW_WEBTOON
 	</select>
-
+	
+	<insert id="setWebtoon" parameterType="Member">
+	INSERT INTO WEBTOON
+	(
+	 WEBTOON_IDX
+	,WEBTOON_TITLE
+	,WEBTOON_CONTENT
+	,WEBTOON_SUMMARY
+	,WEBTOON_AUTHOR
+	,THUM
+	,IN_DATE
+	,IN_ADMIN
+	)
+	VALUES
+	(
+	 WEBTOON_IDX_SEQ.NEXTVAL
+	,#{webtoon_title}
+	,#{webtoon_content}
+	,#{webtoon_summary}
+	,#{webtoon_author}
+	,#{thum}
+	,SYSDATE
+	,#{in_admin}
+	)
+	</insert>
+	
 </mapper>

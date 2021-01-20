@@ -14,15 +14,6 @@
 <!DOCTYPE html>
 <html>
 <script type="text/javascript">
-	var type = "<%=type %>"; 
-	var isOk = "<%=isOk %>"; 
-	
-	$(document).ready(function(){
-		if(type="A" && isOk == "N"){
-			alert("이미 사용 중인 ID입니다.");
-			location.href = "./register.jsp";
-		}
-	});
 
 	var setCount = 0;
 	function setForm(){
@@ -48,8 +39,29 @@
 			return false;
 		}
 			
-		$("#registerForm").submit();
+		$.ajax({
+			 type : "post"
+			,url : "register_action.jsp"
+			,data : $("form[name=registerForm]").serialize()
+			,dataType : "json"
+			,success : function(result){
+				console.log(result);
+				alert(result.msg);
+				
+				if(result.isOk == "N"){
+					return false;
+				}else {
+					location.href = "./login.jsp";
+				}
+			}
+			,error(xhr, status, error){
+				alert("데이터를 전송하는데 오류가 발생했습니다.");
+			}
+		});
+		
+// 		$("#registerForm").submit();
 	}
+	
 
 </script>
 <head>
@@ -122,7 +134,7 @@ body{
 									</form>
 										<div class="text-center mt-3">
 											<button type="button" class="btn btn-lg btn-default" onclick="location.href='./login.jsp'">back to home</button>
-											<button type="submit" class="btn btn-lg btn-primary" onclick="setForm();">Sign up</button>
+											<button type="button" class="btn btn-lg btn-primary" onclick="setForm();">Sign up</button>
 										</div>
 								</div>
 							</div>

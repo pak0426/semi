@@ -69,7 +69,7 @@ public void setReturn(String isOk, String msg, HttpServletResponse response) {
 				isOk = "Y";
 				request.getSession().setAttribute("LOGIN_ID", memberDTO.getMember_id());
 				request.getSession().setAttribute("LOGIN_STATUS", "Y");
-				response.sendRedirect("/views/board/board.jsp?isOk=" + isOk);
+				response.sendRedirect("/views/webtoon/webtoon.jsp?isOk=" + isOk);
 			}
 		}
 	}

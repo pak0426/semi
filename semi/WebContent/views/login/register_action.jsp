@@ -20,14 +20,13 @@
 	//response
 	String type = "";
 	String isOk = "";
+	String msg 	= "";
 	
 	//parameter
 	String member_name = request.getParameter("name");
 	String member_id = request.getParameter("id");
 	String member_email = request.getParameter("email");
 	String member_pw  = request.getParameter("password");
-	
-	
 	
 	//DTO
 	MemberDTO memberDTO = new MemberDTO();
@@ -54,12 +53,16 @@
 		//ID 중복시
 		type = "A";
 		isOk = "N";
-		response.sendRedirect("register.jsp?type=" + type + "&isOk=" + isOk);
+		msg  = "ID가 중복되었습니다.";
+// 		response.sendRedirect("register.jsp?type=" + type + "&isOk=" + isOk);
+		setReturn(isOk, msg, response);
 	}else{
 		//등록 성공시
 		memberDAO.setMember(memberDTO);
 		isOk = "Y";
-		response.sendRedirect("login.jsp?isOk=" + isOk);
+		msg = "등록에 성공하였습니다.";
+		setReturn(isOk, msg, response);
+// 		response.sendRedirect("login.jsp?isOk=" + isOk);
 	}
 	
 	

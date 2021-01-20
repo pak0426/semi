@@ -13,7 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class FileDAO {
-	private final String FILE_DIR = "D:\\FILE_DIR\\";
+//	private final String FILE_DIR = "D:\\FILE_DIR\\";
+	private final String FILE_DIR = "C:\\FILE_DIR\\"; //HM_HOME
 	private final String URL	  = "jdbc:oracle:thin:@106.240.249.42:1521:orcl";
 	private final String ID	 	  = "private_hm";
 	private final String PW	  	  = "amho";
@@ -52,8 +53,6 @@ public class FileDAO {
 				result = rs.getInt(1);
 			}
 			
-			System.out.println("nextval : " + result);
-			
 			rs.close();
 			pstmt.close();
 			conn.close();
@@ -67,12 +66,7 @@ public class FileDAO {
 	}
 	
 	public List<FileDTO> getList() {
-//	public List<HashMap<String, String>> getList() {
 		
-		
-//		List<HashMap<String, String>> thisList = new ArrayList<HashMap<String,String>>();
-		
-		FileDTO fileDTO = new FileDTO();		
 		List<FileDTO> thisList = new ArrayList<FileDTO>();
 		
 		try {
@@ -97,35 +91,12 @@ public class FileDAO {
 			
 			rs 		= pstmt.executeQuery();			
 			while(rs.next()) {
-				HashMap<String, String> listMap = new HashMap<String, String>();
-				
-//				listMap.put("word_title", rs.getString("word_title"));
-//				listMap.put("detail_word_title", rs.getString("detail_word_title"));
+				FileDTO fileDTO = new FileDTO();		
 				
 				fileDTO.setWord_title(rs.getString("word_title"));
 				fileDTO.setDetail_word_title(rs.getString("detail_word_title"));
 				
-//				System.out.println(fileDTO.getWord_title());
-//				System.out.println(fileDTO.getDetail_word_title());
-				
 				thisList.add(fileDTO);
-//				thisList.add(listMap);
-				
-//				System.out.println();
-				
-//				System.out.println("thisList is :" + thisList.get(0));
-//				System.out.println("thisList is :" + thisList.get(1));
-//				System.out.println("thisList is :" + thisList.get(2));
-//				System.out.println("thisList is :" + thisList.get(3));
-//				System.out.println("thisList is :" + thisList.get(4));
-//				System.out.println("thisList is :" + thisList.get(5));
-//				System.out.println("thisList is :" + thisList.get(6));
-//				System.out.println("thisList is :" + thisList.get(7));
-//				thisList.get(0);
-			}
-			
-			for(int i=0; i < thisList.size(); i++) {
-				System.out.println(thisList.get(i).getWord_title());
 			}
 			
 			rs.close();
@@ -169,9 +140,11 @@ public class FileDAO {
 		}
 		
 		try {
+			FileDTO fileDAO = new FileDTO();
+			
 			int count = this.getNextval();
 
-			this.getList();
+			List<FileDTO> list = this.getList();
 			
 			File chkFile = new File(FILE_DIR + nowtime + "_" + count + ".txt");
 			//이미 만들어진 파일 존재여부 체크
@@ -184,8 +157,8 @@ public class FileDAO {
 				OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(FILE_NAME), "UTF8");
 				
 				//파일안에 문자열 쓰기
-				for(int i=0; i < hangle.length; i++) {
-					fw.write(hangle[i] + "\r\n"); 
+				for(int i=0; i < list.size(); i++) {
+					fw.write(list.get(i).getWord_title() + "," + list.get(i).getDetail_word_title() + "\r\n"); 
 				}
 				
 				fw.flush();

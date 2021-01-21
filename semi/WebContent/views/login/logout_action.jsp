@@ -7,5 +7,5 @@
 	request.getSession().setAttribute("LOGIN_ID", null);
 	request.getSession().setAttribute("LOGIN_STAUTS", null);
 	
-	response.sendRedirect("/views/board/board.jsp");
+	response.sendRedirect("/views/webtoon/webtoon.jsp");
 %>

@@ -78,4 +78,34 @@ public class MemberDAO {
 		}
 		return result;
 	}
+	
+	/* method 	: chkPW
+	 * param	: MemberDTO 
+	 * result	: int
+	 * desc		: PW 중복 체크
+	 * */
+	public int chkPW(MemberDTO memberDTO) {
+		int result = 0;
+		
+		SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		
+		String target_name = "Member.chkPW";
+		
+		logger.debug("■ Target NameSpace : " + target_name);
+		
+		try {
+			result = sqlSession.selectOne(target_name, memberDTO);
+			
+			sqlSession.commit();			
+		}catch(Exception e) {
+			sqlSession.rollback();
+			
+			e.printStackTrace();
+		}finally {
+			sqlSession.close();
+		}
+		
+		return result;
+	}
 }

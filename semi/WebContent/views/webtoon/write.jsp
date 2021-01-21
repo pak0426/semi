@@ -78,25 +78,28 @@ img {
 	                <hr class="my-4" />
 	                <div class="form-group">
                         <label for="webtoon_title">제목</label>
-                        <input type="text" class="form-control" id="webtoon_title" name="webtoon_title"/>
+                        <input type="text" class="form-control" id="webtoon_title" name="webtoon_title" style="height:60px"/>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">요약</label>
-                        <textarea rows="" cols="" class="form-control" id="webtoon_summary" name="webtoon_summary"></textarea>
+                        <textarea class="form-control" id="webtoon_summary" name="webtoon_summary" style="height: 200px"></textarea>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">내용</label>
-                        <textarea rows="" cols="" class="form-control" id="webtoon_content" name="webtoon_content"></textarea>
+                        <textarea class="form-control" id="webtoon_content" name="webtoon_content" style="height: 200px"></textarea>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">작성자</label>
-                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author"/>
+                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:60px"/>
 	                </div>
 	                <div class="form-group">
 	                	<label for="firstname">썸네일 이미지</label>
 	                	<br/>
-                        <span>* 이미지 권장 사이즈 : 600 * 400</span><br/>
-						<input type="file" id="addthum" name="addthum">
+	                	<div class="spinner-border text-primary" role="status">
+	                        <span class="visually-hidden">* 이미지 권장 사이즈 : 600 * 400</span>
+	                	</div>
+                        <br/>
+	  				    <input class="form-control" type="file" id="formFile">
 	                </div>
 	                <div class="form-group">
 	                	<label for="firstname">사용 여부</label>

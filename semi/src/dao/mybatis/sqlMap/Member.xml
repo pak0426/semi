@@ -35,10 +35,22 @@
 	)
 	</insert>
 	
+	<!-- ID 중복 검사 -->
 	<select id="chkMember" resultType="int">
 	SELECT
 		COUNT(*)
 	FROM MEMBER
 	WHERE MEMBER_ID = #{member_id}	
 	</select>
+	
+	
+	<!-- 로그인시 ID, PW 확인 -->
+	<select id="chkPW" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM MEMBER
+	WHERE MEMBER_ID = #{member_id}	
+	AND MEMBER_PW = #{member_pw}
+	</select>
+	
 </mapper>

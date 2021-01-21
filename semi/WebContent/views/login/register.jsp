@@ -14,9 +14,24 @@
 <!DOCTYPE html>
 <html>
 <script type="text/javascript">
-
+	var type = "<%=type %>"; 
+	var isOk = "<%=isOk %>"; 
+	
+	$(document).ready(function(){
+		if(type="A" && isOk == "N"){
+			alert("이미 사용 중인 ID입니다.");
+			location.href = "./register.jsp";
+		}
+	});
+	
+	
 	var setCount = 0;
 	function setForm(){
+		
+		if($("#registerForm input:radio[name=type]:checked").val() === undefined){
+			alert("가입 유형을 선택해주세요.");
+			return false;
+		}
 		
 		if($("#name").val() == ""){
 			alert("이름을 입력해주세요.");
@@ -24,8 +39,12 @@
 			return false;
 		}
 		if($("#id").val() == ""){
-			alert("id를 입력해주세요.");
+			alert("ID를 입력해주세요.");
 			$("#id").focus();
+			return false;
+		}
+		if($("#checkId").val() == "N"){
+			alert("ID 중복체크를 진행해주세요.");
 			return false;
 		}
 		if($("#email").val() == ""){
@@ -38,28 +57,91 @@
 			$("#password").focus();
 			return false;
 		}
+		if($("#password2").val() == ""){
+			alert("비밀번호를 한번 더 입력해주세요.");
+			$("#password2").focus();
+			return false;
+		}
+		if($("#password").val() != $("#password2").val()){
+			alert("비밀번호가 일치하지 않습니다.");
+			$("#password2").focus();
+			return false;
+		}
 			
-		$.ajax({
-			 type : "post"
-			,url : "register_action.jsp"
-			,data : $("form[name=registerForm]").serialize()
-			,dataType : "json"
-			,success : function(result){
-				console.log(result);
-				alert(result.msg);
+		$("#registerForm").submit();
 				
-				if(result.isOk == "N"){
-					return false;
-				}else {
-					location.href = "./login.jsp";
-				}
-			}
-			,error(xhr, status, error){
-				alert("데이터를 전송하는데 오류가 발생했습니다.");
-			}
-		});
+// 		$.ajax({
+// 			 type : "post"
+// 			,url : "register_action.jsp"
+// 			,data : $("form[name=registerForm]").serialize()
+// 			,dataType : "json"
+// 			,success : function(result){
+// 				console.log(result);
+// 				alert(result.msg);
+				
+// 				if(result.isOk == "N"){
+// 					return false;
+// 				}else {
+// 					location.href = "./login.jsp";
+// 				}
+// 			}
+// 			,error : function(xhr, status, error){
+// 				alert("데이터를 전송하는데 오류가 발생했습니다.");
+// 			}
+// 		});
 		
-// 		$("#registerForm").submit();
+		
+	}
+	
+	function chkId(){
+
+		let data = {
+				id : $("#id").val()
+		}
+		
+		if($("#id").val() == ""){
+			alert("ID를 입력해주세요.");
+			$("#id").focus();
+			return false;
+		}
+		
+// 		if($("#checkId").val() == "N"){
+// 			alert("ID 중복체크를 진행해주세요.");
+// 			return false;
+// 		}
+		
+		setCount = 0;
+		if(setCount == 0){
+			setCount ++;
+			$.ajax({
+				 type : "post"
+				,url : "./register_action.jsp"
+				,data : data
+				,dataType : "json"
+				,success : function(result){
+					const data = result;
+					console.log(data.isOk);
+					
+					alert(data.msg);
+					
+					if(data.isOk == "Y"){
+	// 					$("#reg_btn").attr('disabled', false);
+						$("#email").focus();
+						$("#checkId").val("Y");
+						$("#checkId_btn").remove();
+					}else{
+						$("#id").focus();
+						return false;
+					}
+					
+				}
+				,error : function(xhr, status, error){
+					alert("데이터를 전송하는데 오류가 발생했습니다.");
+					return false;
+				}
+			});
+			
+		}
 	}
 	
 
@@ -113,15 +195,27 @@ body{
 
 						<div class="card">
 							<div class="card-body">
-								<div class="m-sm-4">
+								<div class="m-sm-2">
 									<form id="registerForm" name="registerForm" action="./register_action.jsp" method="post">
+										<label>가입 유형</label>
+										<div class="form-group">
+											<input id="type_a" name="type"  type="radio" value="user">
+											<label for="type_a">회원</label>&nbsp;&nbsp;&nbsp;
+											<input id="type_b" name="type"  type="radio" value="admin">
+											<label for="type_b">관리자</label>
+										</div>
+										<div class="form-check">
+										</div>
 										<div class="form-group">
 											<label>이름</label>
 											<input class="form-control form-control-lg" type="text" id="name" name="name" placeholder="Enter your name">
 										</div>
 										<div class="form-group">
-											<label>ID</label>
-											<input class="form-control form-control-lg" type="text" id="id" name="id" placeholder="Enter your id">
+											<label class="d-block">ID</label>
+											<input class="form-control form-control-lg d-inline-block w-75" type="text" id="id" name="id" placeholder="Enter your id">
+											<button class="btn btn-primary btn-lg align-top" type="button" id="checkId_btn" name="checkId_btn" value="" onclick="chkId();">중복확인</button>
+											<input type="hidden" id="checkId" name="checkId" value="N">
+											
 										</div>
 										<div class="form-group">
 											<label>Email</label>
@@ -131,10 +225,14 @@ body{
 											<label>Password</label>
 											<input class="form-control form-control-lg" type="password" id="password" name="password" placeholder="Enter password">
 										</div>
+										<div class="form-group">
+											<label>Compare Password</label>
+											<input class="form-control form-control-lg" type="password" id="password2" name="password2" placeholder="Enter password again">
+										</div>
 									</form>
 										<div class="text-center mt-3">
 											<button type="button" class="btn btn-lg btn-default" onclick="location.href='./login.jsp'">back to home</button>
-											<button type="button" class="btn btn-lg btn-primary" onclick="setForm();">Sign up</button>
+											<button type="submit" id="reg_btn" name="reg_btn" class="btn btn-lg btn-primary" onclick="setForm();">Sign up</button>
 										</div>
 								</div>
 							</div>

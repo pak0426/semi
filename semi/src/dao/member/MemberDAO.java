@@ -28,7 +28,7 @@ public class MemberDAO {
 	 * desc		: 회원 등록 
 	 * */
 	public int setMember(MemberDTO memberDTO) {		
-		sqlSession = sqlSessionFactory.openSession();
+		SqlSession sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "Member.setMember";
 		
@@ -57,7 +57,7 @@ public class MemberDAO {
 	 * desc		: DB에 아이디가 존재하는지 확인
 	 * */
 	public int chkMember(MemberDTO memberDTO) {
-		sqlSession = sqlSessionFactory.openSession();
+		SqlSession sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "Member.chkMember";
 		

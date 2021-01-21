@@ -1,9 +1,39 @@
+<%@page import="dao.webtoon.WebtoonDAO"%>
+<%@page import="dao.webtoon.WebtoonDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/views/inc/common.jsp"%>
 <%
 	String session_login_id = (String) request.getSession().getAttribute("LOGIN_ID");	
 	String session_login_status = (String) request.getSession().getAttribute("LOGIN_STATUS");
-
+	
+	//변수 선언
+	String webtoon_idx		 = "";
+	String webtoon_title	 = "";
+	String webtoon_summary	 = "";
+	String webtoon_content	 = "";
+	String webtoon_author	 = "";
+	String thum				 = "";
+	String use_yn 			 = "";
+	
+	//null 처리
+	if(request.getParameter("webtoon_idx") != null) 	webtoon_idx = request.getParameter("webtoon_idx"); 
+	
+	
+	//DAO
+	WebtoonDAO webtoonDAO = new WebtoonDAO();
+	if(!webtoon_idx.equals("")){
+		//DTO
+		WebtoonDTO webtoonDTO = new WebtoonDTO();
+		
+		webtoonDTO = webtoonDAO.getWebtoon(webtoon_idx);
+		
+		out.println("webtoon_idx : " + webtoon_idx);
+		out.println("<br/>");
+		
+		out.println("webtoonDTO : " + webtoonDTO);
+// 		webtoon_title = webtoonDTO.getWebtoon_title();
+		
+	}
 %>
 <!DOCTYPE html>
 <html>
@@ -78,7 +108,7 @@ img {
 	                <hr class="my-4" />
 	                <div class="form-group">
                         <label for="webtoon_title">제목</label>
-                        <input type="text" class="form-control" id="webtoon_title" name="webtoon_title" style="height:60px"/>
+                        <input type="text" class="form-control" id="webtoon_title" name="webtoon_title" style="height:40px" value="<%=webtoon_title %>"/>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">요약</label>
@@ -90,7 +120,7 @@ img {
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">작성자</label>
-                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:60px"/>
+                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:40px"/>
 	                </div>
 	                <div class="form-group">
 	                	<label for="firstname">썸네일 이미지</label>

@@ -4,14 +4,14 @@
 
 <mapper namespace="Webtoon">
 
-	<select id="getWebtoonList" resultType="hashmap">
+	<select id="getWebtoonList" resultType="Webtoon">
 	SELECT
 		*
 	FROM
 	NEW_REVIEW_WEBTOON
 	</select>
 	
-	<insert id="setWebtoon" parameterType="Member">
+	<insert id="setWebtoon">
 	INSERT INTO WEBTOON
 	(
 	 WEBTOON_IDX
@@ -35,5 +35,16 @@
 	,#{in_admin}
 	)
 	</insert>
+	
+	<select id="getMaxIdx" resultType="int">
+	SELECT MAX(WEBTOON_IDX) FROM WEBTOON
+	</select>
+	
+	<select id="getWebtoon" parameterType="String" resultType="Webtoon">
+	SELECT 
+		*
+	FROM WEBTOON 
+	WHERE WEBTOON_IDX = 25
+	</select>
 	
 </mapper>

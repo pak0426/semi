@@ -46,7 +46,15 @@
 	
 	int result = webtoonDAO.setWebtoon(webtoonDTO);
 	
-	out.println("result : " + result);
+	int max_idx = webtoonDAO.getMaxIdx();
+	
+	out.println("max_idx" + max_idx);
+	
+	//등록이 되었을때
+	if(result == 1){
+		response.sendRedirect("./write.jsp?webtoon_idx=" + max_idx);
+	}
+	
 %>
 
 

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Webtoon">
+	<resultMap id="WebtoonMap" type="Webtoon">
+		<result column="webtoon_idx" property="webtoon_idx"/>
+		<result column="webtoon_title" property="webtoon_title"/>
+		<result column="webtoon_content" property="webtoon_content"/>
+		<result column="webtoon_summary" property="webtoon_summary"/>
+		<result column="webtoon_author" property="webtoon_author"/>
+		<result column="on_date" property="on_date"/>
+		<result column="thum" property="thum"/>
+		<result column="in_date" property="in_date"/>
+		<result column="in_admin" property="in_admin"/>
+		<result column="up_date" property="up_date"/>
+		<result column="up_admin" property="up_admin"/>
+		<result column="use_yn" property="use_yn"/>
+		<result column="img" property="img"/>
+		<result column="img_ori" property="img_ori"/>
+		<result column="dp_cnt" property="dp_cnt"/>
+	 </resultMap>
+
+	<select id="getWebtoonList" resultMap="WebtoonMap">
+	SELECT
+		*
+	FROM
+	WEBTOON
+	</select>
+	
+	<insert id="setWebtoon">
+	INSERT INTO WEBTOON
+	(
+	 WEBTOON_IDX
+	,WEBTOON_TITLE
+	,WEBTOON_CONTENT
+	,WEBTOON_SUMMARY
+	,WEBTOON_AUTHOR
+	,THUM
+	,IN_DATE
+	,IN_ADMIN
+	,USE_YN
+	)
+	VALUES
+	(
+	 WEBTOON_IDX_SEQ.NEXTVAL
+	,#{webtoon_title}
+	,#{webtoon_content}
+	,#{webtoon_summary}
+	,#{webtoon_author}
+	,#{thum}
+	,SYSDATE
+	,#{in_admin}
+	,#{use_yn}
+	)
+	</insert>
+	
+	<select id="getMaxIdx" resultType="int">
+	SELECT MAX(WEBTOON_IDX)+1 FROM WEBTOON
+	</select>
+	
+	<select id="getWebtoon" parameterType="String" resultMap="WebtoonMap">
+	SELECT 
+		*
+	FROM WEBTOON 
+	WHERE WEBTOON_IDX = #{webtoon_idx}
+	</select>
+	
+	<update id="modWebtoon" parameterType="hashMap">
+	UPDATE WEBTOON SET
+	 WEBTOON_TITLE 	 = #{webtoon_title}
+	,WEBTOON_CONTENT = #{webtoon_content}
+	,WEBTOON_SUMMARY = #{webtoon_summary}
+	,WEBTOON_AUTHOR  = #{webtoon_author}
+	,THUM 		 	 = #{thum}
+	,UP_DATE 		 = SYSDATE
+	,UP_ADMIN 		 = #{up_admin}
+	,USE_YN 		 = #{use_yn}
+	WHERE
+	WEBTOON_IDX = #{webtoon_idx}
+	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>

@@ -70,7 +70,7 @@
 			response.sendRedirect("./write.jsp?isOk=" + isOk + "&type=" + type);
 		}
 	//수정시
-	}else{
+	}else if(act.equals("U")){
 		up_admin = (String) request.getSession().getAttribute("LOGIN_ID");
 		webtoonDTO.setUp_admin(up_admin);
 		
@@ -87,7 +87,21 @@
 			type = "MOD_FAIL";
 			response.sendRedirect("./write.jsp?webtoon_idx=" + webtoon_idx + "&isOk=" + isOk + "&type=" + type);
 		}
+	//삭제시	
+	}else{
+		int result = webtoonDAO.delWebtoon(webtoon_idx);
 		
+		//삭제 성공
+		if(result == 1){
+			isOk = "Y";
+			type = "DEL_SUCC";
+			response.sendRedirect("./webtoon.jsp?isOk=" + isOk + "&type=" + type);
+		}else{
+			//수정 실패
+			isOk = "N";
+			type = "DEL_FAIL";
+			response.sendRedirect("./webtoon.jsp?isOk=" + isOk + "&type=" + type);
+		}
 	}
 	
 %>

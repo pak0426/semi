@@ -19,13 +19,21 @@
 		<result column="img" property="img"/>
 		<result column="img_ori" property="img_ori"/>
 		<result column="dp_cnt" property="dp_cnt"/>
+		<result column="rnum" property="rnum"/>
+		<result column="in_date_str" property="in_date_str"/>
 	 </resultMap>
 
 	<select id="getWebtoonList" resultMap="WebtoonMap">
 	SELECT
 		*
-	FROM
-	WEBTOON
+	FROM(
+		SELECT
+			WEBTOON.*
+			,TO_CHAR(WEBTOON.IN_DATE, 'YYYY-MM-DD-HH24:MI:SS') AS IN_DATE_STR
+			,ROWNUM AS RNUM
+		FROM WEBTOON WEBTOON
+		ORDER BY WEBTOON_IDX DESC
+	) A
 	</select>
 	
 	<insert id="setWebtoon">
@@ -80,7 +88,10 @@
 	WEBTOON_IDX = #{webtoon_idx}
 	</update>
 	
-	
+	<delete id="delWebtoon" parameterType="String">
+	DELETE FROM WEBTOON
+	WHERE WEBTOON_IDX = #{webtoon_idx}
+	</delete>
 	
 	
 	

@@ -18,6 +18,10 @@ public class WebtoonDTO {
 	private String img;
 	private String img_ori;
 	private int dp_cnt;
+	private String rnum;
+	private String in_date_str;
+	
+	
 	
 	
 	public String getWebtoon_idx() {
@@ -109,5 +113,19 @@ public class WebtoonDTO {
 	}
 	public void setDp_cnt(int dp_cnt) {
 		this.dp_cnt = dp_cnt;
+	}
+	
+	
+	public String getRnum() {
+		return rnum;
+	}
+	public void setRnum(String rownum) {
+		this.rnum = rownum;
+	}
+	public String getIn_date_str() {
+		return in_date_str;
+	}
+	public void setIn_date_str(String in_date_str) {
+		this.in_date_str = in_date_str;
 	}
 }

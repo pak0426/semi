@@ -21,25 +21,27 @@
 		}
 	}
 	
-	//List
 	
 	//DTO
 	WebtoonDTO webtoonDTO = new WebtoonDTO();
 
+	//List
 	List<WebtoonDTO> thisList = new ArrayList<WebtoonDTO>();
 	
 	//DAO
 	WebtoonDAO webtoonDAO = new WebtoonDAO();
 	thisList = webtoonDAO.getWebtoonList();
 	
-	if(thisList != null){
-// 		for(WebtoonDTO row : thisList){
-// 			out.println("list : " + row.getWebtoon_title());
-// 		}
+	if(thisList != null)	{
 		request.setAttribute("thisList", thisList);
 	}
 	
+	//isOk, msg
+	String isOk = "";
+	String type  = "";
 	
+	if(request.getParameter("isOk") != null)  isOk = request.getParameter("isOk"); 
+	if(request.getParameter("type") != null)  type = request.getParameter("type");
 %>
 
 <!DOCTYPE html>
@@ -100,6 +102,7 @@ a {
 .table thead tr th {
     text-transform: uppercase;
     font-size: 0.875em;
+    text-align : center;
 }
 .table thead tr th {
     border-bottom: 2px solid #e7ebee;
@@ -107,12 +110,14 @@ a {
 .table tbody tr td:first-child {
     font-size: 1.125em;
     font-weight: 300;
+    text-align : center;
 }
 .table tbody tr td {
     font-size: 0.875em;
     vertical-align: middle;
     border-top: 1px solid #e7ebee;
     padding: 12px 8px;
+    text-align : center;
 }
 a:hover{
 text-decoration:none;
@@ -121,6 +126,23 @@ text-decoration:none;
 <script type="text/javascript">
 	const session_login_id 	   = "<%=session_login_id %>";
 	const session_login_status = "<%=session_login_status %>";
+	
+	let isOk = "<%=isOk %>"; 
+	let type = "<%=type %>"; 
+	
+	$(document).ready(function(){
+		if(isOk == "Y"){
+			if(type == "DEL_SUCC"){
+				alert("삭제에 성공하였습니다.");
+				location.href = "./webtoon.jsp";
+			}
+		}else{
+			if(type == "DEL_FAIL"){
+				alert("삭제에 실패하였습니다.");				
+				location.href = "./webtoon.jsp";
+			}	
+		}
+	});
 	
 	function loc_write(){
 		if(session_login_id == "" && session_login_status == ""){
@@ -153,8 +175,7 @@ text-decoration:none;
                                 <th><span>제목</span></th>
                                 <th><span>등록일</span></th>
                                 <th><span>작성자</span></th>
-                                <th><span>Status</span></th>
-                                <th><span>Email</span></th>
+<!--                                 <th><span>Email</span></th> -->
                                 <th>&nbsp;</th>
                                 </tr>
                             </thead>
@@ -162,44 +183,12 @@ text-decoration:none;
                             <c:choose>
                             	<c:when test="${fn:length(thisList) ne 0}">
                             		<c:forEach items="${thisList }" var="row" varStatus="i">
-<%--                             		${row.webtoon_title } --%>
 	                                <tr>
-	                                    <td>
-	                                    ${row.webtoon_idx }
-	                                    </td>
-	                                    <td>
-	                                    <a href="#" class="user-link">${row.webtoon_title }</a>
-	                                    </td>
-	                                    <td>
-	                                        
-	                                    </td>
-	                                    <td>${row.in_date }</td>
-	                                    <td>
-	                                        <span class="label label-default">${row.webtoon_author }</span>
-	                                    </td>
-	                                    <td>
-	                                        <a href="#">marlon@brando.com</a>
-	                                    </td>
-	                                    <td style="width: 20%;">
-	                                        <a href="#" class="table-link text-warning">
-	                                            <span class="fa-stack">
-	                                                <i class="fa fa-square fa-stack-2x"></i>
-	                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-	                                            </span>
-	                                        </a>
-	                                        <a href="#" class="table-link text-info">
-	                                            <span class="fa-stack">
-	                                                <i class="fa fa-square fa-stack-2x"></i>
-	                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-	                                            </span>
-	                                        </a>
-	                                        <a href="#" class="table-link danger">
-	                                            <span class="fa-stack">
-	                                                <i class="fa fa-square fa-stack-2x"></i>
-	                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-	                                            </span>
-	                                        </a>
-	                                    </td>
+	                                    <td>${row.rnum }</td>
+	                                    <td><a href="./write.jsp?webtoon_idx=${row.webtoon_idx }" class="user-link">${row.webtoon_title }</a></td>
+	                                    <td>${row.in_date_str }</td>
+	                                    <td>${row.webtoon_author }</td>
+	                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href = './write_action.jsp?webtoon_idx=${row.webtoon_idx}&act=D'">삭제하기</button></td>
 	                                </tr>
                             		</c:forEach>
                             	</c:when>

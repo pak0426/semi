@@ -1,4 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="dao.webtoon.WebtoonDAO"%>
+<%@page import="dao.webtoon.WebtoonDTO"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ include file="/views/inc/common.jsp"%>
 <%	
 	String session_login_id = "";
@@ -14,6 +20,26 @@
 			request.setAttribute("session_login_status", session_login_status);
 		}
 	}
+	
+	//List
+	
+	//DTO
+	WebtoonDTO webtoonDTO = new WebtoonDTO();
+
+	List<WebtoonDTO> thisList = new ArrayList<WebtoonDTO>();
+	
+	//DAO
+	WebtoonDAO webtoonDAO = new WebtoonDAO();
+	thisList = webtoonDAO.getWebtoonList();
+	
+	if(thisList != null){
+// 		for(WebtoonDTO row : thisList){
+// 			out.println("list : " + row.getWebtoon_title());
+// 		}
+		request.setAttribute("thisList", thisList);
+	}
+	
+	
 %>
 
 <!DOCTYPE html>
@@ -92,6 +118,21 @@ a:hover{
 text-decoration:none;
 }
 </style>
+<script type="text/javascript">
+	const session_login_id 	   = "<%=session_login_id %>";
+	const session_login_status = "<%=session_login_status %>";
+	
+	function loc_write(){
+		if(session_login_id == "" && session_login_status == ""){
+			alert("로그인 하셔야 글 작성이 가능합니다.");
+			return false;
+			
+		}else{
+			location.href="./write.jsp";
+		}
+		
+	}
+</script>
 </head>
 <body>
 <hr>
@@ -100,7 +141,7 @@ text-decoration:none;
     <div class="row">
         <div class="col-lg-12">
         	<div class="btn-wrap text-right pb-3">
-	        	<button type="submit" class="btn btn-lg btn-primary" onclick="location.href='./write.jsp'">글 작성</button>
+	        	<button type="submit" class="btn btn-lg btn-primary" onclick="loc_write();">글 작성</button>
         	</div>
             <div class="main-box clearfix">
                 <div class="main-box-body clearfix">
@@ -109,48 +150,60 @@ text-decoration:none;
                             <thead>
                                 <tr>
                                 <th><span>글 번호</span></th>
-                                <th><span>글 제목</span></th>
-                                <th><span>Created</span></th>
+                                <th><span>제목</span></th>
+                                <th><span>등록일</span></th>
+                                <th><span>작성자</span></th>
                                 <th><span>Status</span></th>
                                 <th><span>Email</span></th>
                                 <th>&nbsp;</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <img src="https://bootdey.com/img/Content/user_1.jpg" alt=""> <!-- 썸네일 이미지 -->
-                                        <a href="#" class="user-link">Full name 1</a>
-                                        <span class="user-subhead">Member</span>
-                                    </td>
-                                    <td>2013/08/12</td>
-                                    <td>
-                                        <span class="label label-default">pending</span>
-                                    </td>
-                                    <td>
-                                        <a href="#">marlon@brando.com</a>
-                                    </td>
-                                    <td style="width: 20%;">
-                                        <a href="#" class="table-link text-warning">
-                                            <span class="fa-stack">
-                                                <i class="fa fa-square fa-stack-2x"></i>
-                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-                                            </span>
-                                        </a>
-                                        <a href="#" class="table-link text-info">
-                                            <span class="fa-stack">
-                                                <i class="fa fa-square fa-stack-2x"></i>
-                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-                                            </span>
-                                        </a>
-                                        <a href="#" class="table-link danger">
-                                            <span class="fa-stack">
-                                                <i class="fa fa-square fa-stack-2x"></i>
-                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-                                            </span>
-                                        </a>
-                                    </td>
-                                </tr>
+                            <c:choose>
+                            	<c:when test="${fn:length(thisList) ne 0}">
+                            		<c:forEach items="${thisList }" var="row" varStatus="i">
+<%--                             		${row.webtoon_title } --%>
+	                                <tr>
+	                                    <td>
+	                                    ${row.webtoon_idx }
+	                                    </td>
+	                                    <td>
+	                                    <a href="#" class="user-link">${row.webtoon_title }</a>
+	                                    </td>
+	                                    <td>
+	                                        
+	                                    </td>
+	                                    <td>${row.in_date }</td>
+	                                    <td>
+	                                        <span class="label label-default">${row.webtoon_author }</span>
+	                                    </td>
+	                                    <td>
+	                                        <a href="#">marlon@brando.com</a>
+	                                    </td>
+	                                    <td style="width: 20%;">
+	                                        <a href="#" class="table-link text-warning">
+	                                            <span class="fa-stack">
+	                                                <i class="fa fa-square fa-stack-2x"></i>
+	                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+	                                            </span>
+	                                        </a>
+	                                        <a href="#" class="table-link text-info">
+	                                            <span class="fa-stack">
+	                                                <i class="fa fa-square fa-stack-2x"></i>
+	                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+	                                            </span>
+	                                        </a>
+	                                        <a href="#" class="table-link danger">
+	                                            <span class="fa-stack">
+	                                                <i class="fa fa-square fa-stack-2x"></i>
+	                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+	                                            </span>
+	                                        </a>
+	                                    </td>
+	                                </tr>
+                            		</c:forEach>
+                            	</c:when>
+                            </c:choose>
                             </tbody>
                         </table>
                     </div>

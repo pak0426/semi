@@ -7,6 +7,8 @@
 	String session_login_status = (String) request.getSession().getAttribute("LOGIN_STATUS");
 	
 	//변수 선언
+	String act = "I";
+	
 	String webtoon_idx		 = "";
 	String webtoon_title	 = "";
 	String webtoon_summary	 = "";
@@ -14,26 +16,43 @@
 	String webtoon_author	 = "";
 	String thum				 = "";
 	String use_yn 			 = "";
+	String use_yn_str		 = "";
+	
+	
 	
 	//null 처리
 	if(request.getParameter("webtoon_idx") != null) 	webtoon_idx = request.getParameter("webtoon_idx"); 
 	
-	
 	//DAO
 	WebtoonDAO webtoonDAO = new WebtoonDAO();
 	if(!webtoon_idx.equals("")){
+		act = "U";
+		
 		//DTO
 		WebtoonDTO webtoonDTO = new WebtoonDTO();
 		
+		//DAO
 		webtoonDTO = webtoonDAO.getWebtoon(webtoon_idx);
 		
-		out.println("webtoon_idx : " + webtoon_idx);
-		out.println("<br/>");
-		
-		out.println("webtoonDTO : " + webtoonDTO);
-// 		webtoon_title = webtoonDTO.getWebtoon_title();
-		
+		if(webtoonDTO != null){
+			webtoon_title 	 = webtoonDTO.getWebtoon_title();
+			webtoon_summary	 = webtoonDTO.getWebtoon_summary();
+			webtoon_content	 = webtoonDTO.getWebtoon_content();
+			webtoon_author	 = webtoonDTO.getWebtoon_author();
+			thum			 = webtoonDTO.getThum();
+			use_yn 			 = webtoonDTO.getUse_yn();
+			
+			//${use_yn}에 저장
+			request.setAttribute("use_yn", use_yn);
+		}
 	}
+	
+	//isOk, msg
+	String isOk = "";
+	String type  = "";
+	
+	if(request.getParameter("isOk") != null)  isOk = request.getParameter("isOk"); 
+	if(request.getParameter("type") != null)  type = request.getParameter("type");
 %>
 <!DOCTYPE html>
 <html>
@@ -41,9 +60,9 @@
 <link type="text/css" rel="stylesheet" href="/res/css/base.css">
 <head>
 <style type="text/css">
-body{
-    color: #8e9194;
-    background-color: #f4f6f9;
+html, body{
+     color: #8e9194; 
+     background-color: #f4f6f9; 
 }
 .avatar-xl img {
     width: 110px;
@@ -64,7 +83,6 @@ img {
 .form-control {
     display: block;
     width: 100%;
-    height: calc(1.5em + 0.75rem + 2px);
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
     font-weight: 400;
@@ -78,8 +96,35 @@ img {
 }
 </style>
 <script type="text/javascript">
+	let webtoon_idx = "<%=webtoon_idx %>";
+	let isOk = "<%=isOk %>"; 
+	let type = "<%=type %>"; 
+		
+	$(document).ready(function(){	
+		
+		if(isOk == "Y"){
+			if(type == "SET_SUCC"){
+				alert("등록에 성공하였습니다.");
+				webtoon_idx = getParameter("webtoon_idx");
+				location.href = "./write.jsp?webtoon_idx=" + webtoon_idx;
+			}else if(type == "MOD_SUCC"){				
+				alert("수정에 성공하였습니다.");
+				webtoon_idx = getParameter("webtoon_idx");
+				location.href = "./write.jsp?webtoon_idx=" + webtoon_idx;
+			}
+		}else{
+			if(type == "SET_FAIL"){
+				alert("등록에 실패하였습니다.");				
+				location.href = "./write.jsp";
+				
+			}else if(type == "MOD_FAIL"){
+				alert("수정에 실패하였습니다.");
+				location.href = "./write.jsp?webtoon_idx=" + webtoon_idx;
+			}
+		}
+	});
+
 	function setForm(){
-		console.log("test");
 // 		if($("#webtoon_title").val() == ""){
 // 			alert("제목을 입력해주세요.");
 // 			$("#webtoon_title").focus();
@@ -93,6 +138,13 @@ img {
 			
 		$("#writeForm").submit();
 	}
+	
+	function getParameter(name){
+		name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
 </script>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -105,6 +157,8 @@ img {
 	        <h2 class="h3 mb-4 page-title">write</h2>
 	        <div class="my-4">
 	            <form class="form-horizontal" id="writeForm" name="writeForm" action="./write_action.jsp" method="post">
+	            <input type ="hidden" id="act" name="act" value="<%=act %>" />
+	            <input type ="hidden" id="webtoon_idx" name="webtoon_idx" value="<%=webtoon_idx %>" />
 	                <hr class="my-4" />
 	                <div class="form-group">
                         <label for="webtoon_title">제목</label>
@@ -112,15 +166,15 @@ img {
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">요약</label>
-                        <textarea class="form-control" id="webtoon_summary" name="webtoon_summary" style="height: 200px"></textarea>
+                        <textarea class="form-control" id="webtoon_summary" name="webtoon_summary" style="height: 200px"><%=webtoon_summary %></textarea>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">내용</label>
-                        <textarea class="form-control" id="webtoon_content" name="webtoon_content" style="height: 200px"></textarea>
+                        <textarea class="form-control" id="webtoon_content" name="webtoon_content" style="height: 200px"><%=webtoon_content %></textarea>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">작성자</label>
-                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:40px"/>
+                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:40px" value="<%=webtoon_author %>"/>
 	                </div>
 	                <div class="form-group">
 	                	<label for="firstname">썸네일 이미지</label>
@@ -133,11 +187,12 @@ img {
 	                </div>
 	                <div class="form-group">
 	                	<label for="firstname">사용 여부</label>
-                        <label><input type="radio" id="use_y" name="use_yn" value="Y" checked/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
-						<label><input type="radio" id="use_n" name="use_yn" value="N" />&nbsp;미사용</label>
+                        <label><input type="radio" id="use_y" name="use_yn" value="Y" ${use_yn eq 'Y' ? 'checked' : '' }/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
+						<label><input type="radio" id="use_n" name="use_yn" value="N" ${use_yn eq 'N' ? 'checked' : '' }/>&nbsp;미사용</label>
 	                </div>
 	            </form>
                 <button type="submit" class="btn btn-primary" onclick="setForm();">저장</button>
+                <button type="submit" class="btn btn-primary" onclick="location.href = './webtoon.jsp'">목록</button>
 	        </div>
 	    </div>
 	</div>

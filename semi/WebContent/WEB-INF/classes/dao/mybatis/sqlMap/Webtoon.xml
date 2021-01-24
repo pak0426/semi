@@ -19,13 +19,37 @@
 		<result column="img" property="img"/>
 		<result column="img_ori" property="img_ori"/>
 		<result column="dp_cnt" property="dp_cnt"/>
+		
 		<result column="rnum" property="rnum"/>
 		<result column="in_date_str" property="in_date_str"/>
+		<result column="totalCount" property="totalCount"/>
 	 </resultMap>
+	 
+<!-- 	 <sql id="webtoon"> -->
+<!-- 	 	<choose> -->
+<!-- 	 		<when test="skey.equals('a')"> -->
+<!-- 	 		WEBTOON_TITLE LIKE = '%' || #{sval} || '%' -->
+<!-- 	 		</when> -->
+<!-- 	 	</choose> -->
+<!-- 	 </sql> -->
 
 	<select id="getWebtoonList" resultMap="WebtoonMap">
 	SELECT
 		*
+	FROM(
+		SELECT
+			WEBTOON.*
+			,TO_CHAR(WEBTOON.IN_DATE, 'YYYY-MM-DD-HH24:MI:SS') AS IN_DATE_STR
+			,ROWNUM AS RNUM
+		FROM WEBTOON WEBTOON
+		ORDER BY WEBTOON_IDX DESC
+	) A
+	WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="getTotalCount" resultType="int">
+	SELECT
+		COUNT(*) AS TOTALCOUNT
 	FROM(
 		SELECT
 			WEBTOON.*

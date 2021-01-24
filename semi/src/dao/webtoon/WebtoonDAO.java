@@ -19,7 +19,7 @@ public class WebtoonDAO {
 	 * result	: List
 	 * desc		: 웹툰 리스트 출력 
 	 * */
-	public List<WebtoonDTO> getWebtoonList() {
+	public List<WebtoonDTO> getWebtoonList(WebtoonDTO webtoonDTO) {
 		sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "Webtoon.getWebtoonList";
@@ -27,7 +27,7 @@ public class WebtoonDAO {
 		List<WebtoonDTO> list = new ArrayList<WebtoonDTO>();
 		
 		try {
-			list = sqlSession.selectList(target_name);
+			list = sqlSession.selectList(target_name, webtoonDTO);
 			
 			sqlSession.commit();			
 		}catch(Exception e) {
@@ -39,6 +39,35 @@ public class WebtoonDAO {
 		}
 		
 		return list;
+	}
+	
+	/* method 	: getTotalCount
+	 * param	: WebtoonDTO 
+	 * result	: int
+	 * desc		: get totalCount
+	 * */
+	public int getTotalCount(WebtoonDTO webtoonDTO) {
+		sqlSession = sqlSessionFactory.openSession();
+		
+		String target_name = "Webtoon.getTotalCount";
+		
+		HashMap<String, String> param = new HashMap<String, String>();
+		
+		int result = 0;
+		
+		try {
+			result = sqlSession.selectOne(target_name);
+			  
+			sqlSession.commit();			
+		}catch(Exception e) {
+			sqlSession.rollback();
+			
+			e.printStackTrace();
+		}finally {
+			sqlSession.close();
+		}
+		
+		return result;
 	}
 	
 	/* method 	: setWebtoon

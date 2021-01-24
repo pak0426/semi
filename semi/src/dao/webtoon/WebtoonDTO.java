@@ -20,6 +20,12 @@ public class WebtoonDTO {
 	private int dp_cnt;
 	private String rnum;
 	private String in_date_str;
+	private int totalCount;
+	private int startRow;
+	private int endRow;
+	private String skey;
+	private String sval;
+	
 	
 	
 	
@@ -127,5 +133,35 @@ public class WebtoonDTO {
 	}
 	public void setIn_date_str(String in_date_str) {
 		this.in_date_str = in_date_str;
+	}
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+	public int getStartRow() {
+		return startRow;
+	}
+	public void setStartRow(int startRow) {
+		this.startRow = startRow;
+	}
+	public int getEndRow() {
+		return endRow;
+	}
+	public void setEndRow(int endRow) {
+		this.endRow = endRow;
+	}
+	public String getSkey() {
+		return skey;
+	}
+	public void setSkey(String skey) {
+		this.skey = skey;
+	}
+	public String getSval() {
+		return sval;
+	}
+	public void setSval(String sval) {
+		this.sval = sval;
 	}
 }

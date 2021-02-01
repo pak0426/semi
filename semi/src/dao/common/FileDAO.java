@@ -9,12 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 public class FileDAO {
 //	private final String FILE_DIR = "D:\\FILE_DIR\\";
-	private final String FILE_DIR = "C:\\FILE_DIR\\"; //HM_HOME
+	private final String FILE_DIR = "C:\\FILE_DIR\\RT\\"; //HM_HOME
 	private final String URL	  = "jdbc:oracle:thin:@106.240.249.42:1521:orcl";
 	private final String ID	 	  = "private_hm";
 	private final String PW	  	  = "amho";
@@ -84,6 +83,8 @@ public class FileDAO {
 			query.append("FROM EPTS.CMTN_WORD_DETAIL DETAIL      										    		  \n");
 			query.append("LEFT OUTER JOIN EPTS.CMTN_WORD WORD      										   		 	  \n");
 			query.append("ON WORD.WORD_IDX = DETAIL.WORD_IDX      										   			  \n");
+			query.append("WHERE DETAIL.TYPE  = '000010000200001'  										   			  \n"); //RT 검색
+//			query.append("WHERE DETAIL.TYPE  = '000010000200002'  										   			  \n"); //UF 검색
 			query.append("GROUP BY DETAIL.WORD_IDX, WORD.WORD_TITLE      									  	      \n");
 			
 			conn 	= this.getConnection();

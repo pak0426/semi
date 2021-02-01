@@ -210,6 +210,10 @@ text-decoration:none;
 		let pp = $("#pp").val();
 		let pg = getParameter("pg");
 		
+		if(getParameter("pg") == null){
+			
+		}
+		
 		location.href = "./webtoon.jsp?pg=" + pg + "&pp=" + pp;
 	}
 	

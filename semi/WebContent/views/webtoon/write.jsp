@@ -187,8 +187,8 @@ img {
 	                </div>
 	                <div class="form-group">
 	                	<label for="firstname">사용 여부</label>
-                        <label><input type="radio" id="use_y" name="use_yn" value="Y" ${use_yn eq 'Y' ? 'checked' : '' }/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
-						<label><input type="radio" id="use_n" name="use_yn" value="N" ${use_yn eq 'N' ? 'checked' : '' }/>&nbsp;미사용</label>
+                        <label><input type="radio" id="use_y" name="use_yn" value="Y" <%=use_yn.equals("Y") ? "checked" : "" %>/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
+						<label><input type="radio" id="use_n" name="use_yn" value="N" <%=use_yn.equals("N") ? "checked" : "" %>/>&nbsp;미사용</label>
 	                </div>
 	            </form>
                 <button type="submit" class="btn btn-primary" onclick="setForm();">저장</button>

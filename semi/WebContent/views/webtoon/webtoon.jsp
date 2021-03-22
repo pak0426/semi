@@ -5,8 +5,6 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="dao.webtoon.WebtoonDAO"%>
 <%@page import="dao.webtoon.WebtoonDTO"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ include file="/views/inc/common.jsp"%>
 <%	
 	String session_login_id = "";
@@ -28,16 +26,38 @@
 	WebtoonDTO webtoonDTO = new WebtoonDTO();
 	WebtoonDAO webtoonDAO = new WebtoonDAO();
 	
+	//search
+	String skey = "";
+	String sval = "";
+	
+	if(request.getParameter("skey") != null) 	skey = request.getParameter("skey"); 
+	if(request.getParameter("sval") != null) 	sval = request.getParameter("sval"); 
+	
+	webtoonDTO.setSkey(skey);
+	webtoonDTO.setSval(sval);
+	
 	//paging
 	int pg = 1;
 	int pp = 10;
-
-	if(request.getParameter("pg") != null) pg = Integer.parseInt(request.getParameter("pg"));
-	if(request.getParameter("pp") != null) pp = Integer.parseInt(request.getParameter("pp"));
+	
+	String req_pg = request.getParameter("pg");
+	String req_pp = request.getParameter("pp");
+	
+	if(req_pg != null) {
+		pg = Integer.parseInt(req_pg); 
+	}
+	if(req_pp != null){
+		pp = Integer.parseInt(req_pp); 
+	}
 
 	PagingUtil pagingUtil = new PagingUtil();
 	
 	HashMap param = new HashMap();
+	
+	HashMap<String, String> countMap = new HashMap<String, String>();
+	
+// 	countMap.put("skey", skey);
+// 	countMap.put("skey", s);
 	
 	int totalCount = webtoonDAO.getTotalCount(webtoonDTO);
 	
@@ -49,34 +69,19 @@
 	Integer startPage = (Integer) param.get("startPage");
 	Integer endPage = (Integer) param.get("endPage");
 	
-	out.println("startPage : " + startPage);
-	out.println("endPage : " + endPage);
-	out.println("pageNum : " + pageNum);
-	
 	webtoonDTO.setStartRow(startRow);
 	webtoonDTO.setEndRow(endRow);
 	
-	//search
-	String skey = "";
-	String sval = "";
 	
-	if(request.getParameter("skey") != null) 	skey = request.getParameter("skey"); 
-	if(request.getParameter("sval") != null) 	sval = request.getParameter("sval"); 
-	
-	webtoonDTO.setSkey(skey);
-	webtoonDTO.setSval(sval);
-
 	//List
 	List<WebtoonDTO> thisList = new ArrayList<WebtoonDTO>();
 	
-	//DAO
-	
+	//DAO	
 	thisList = webtoonDAO.getWebtoonList(webtoonDTO);
 	
 	if(thisList != null)	{
 		request.setAttribute("thisList", thisList);
 	}
-	
 	
 	//isOk, msg
 	String isOk = "";
@@ -84,6 +89,7 @@
 	
 	if(request.getParameter("isOk") != null)  isOk = request.getParameter("isOk"); 
 	if(request.getParameter("type") != null)  type = request.getParameter("type");
+	
 %>
 
 <!DOCTYPE html>
@@ -188,37 +194,43 @@ text-decoration:none;
 		$("#pp").val(<%=pp %>).prop("selected", true);
 	});
 	
-	function getParameter(name){
-		name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-	}
-	
-	function loc_write(){
+	function loc_write(webtoon_idx){
 		if(session_login_id == "" && session_login_status == ""){
-			alert("로그인 하셔야 글 작성이 가능합니다.");
+			alert("로그인 해주세요.");
 			return false;
-			
-		}else{
+		}
+		
+		console.log("webtoon_idx : " + webtoon_idx);
+		
+		if(webtoon_idx == "" || webtoon_idx === undefined){
 			location.href="./write.jsp";
+		}
+		else{
+			location.href="./write.jsp?webtoon_idx="+webtoon_idx;
 		}
 		
 	}
 	
 	function chg_pp(){
 		let pp = $("#pp").val();
-		let pg = getParameter("pg");
+		let pg = "<%=pg %>";
 		
-		if(getParameter("pg") == null){
-			
-		}
+		if(pg == "") pg=1;
 		
 		location.href = "./webtoon.jsp?pg=" + pg + "&pp=" + pp;
 	}
 	
 	function search(){
 		console.log("search");
+		var skey = $("#skey").val();
+		var sval = $("#sval").val();
+		
+		if(skey != "" && sval != ""){
+			location.href = "./webtoon.jsp?skey="+skey+"&sval="+sval;
+		}
+		
+		console.log("skey : " + skey);
+		console.log("sval : " + sval);
 	}
 </script>
 </head>
@@ -228,21 +240,25 @@ text-decoration:none;
 	<%@ include file="../inc/top.jsp" %>
     <div class="row">
         <div class="col-lg-12">
-       		<form id="searchForm" name="searchForm">
-				<select id="pp" name="pp" onchange="chg_pp();"> 
+       		<form id="searchForm" name="searchForm" action="./write_action.jsp"><br/>
+	            <div class="input-group">
+					<select class="form-control" id="skey" name="skey" style="">
+		                <option value="a" <%=skey.equals("a") ? "selected" : "" %>>제목</option>
+		                <option value="b" <%=skey.equals("b") ? "selected" : "" %>>내용</option>
+		                <option value="c" <%=skey.equals("c") ? "selected" : "" %>>작성자</option>
+		            </select>
+		            <input type="text" size="30" id="sval" name="sval" value="<%=sval %>" style="width:500px;height:35px;font-size:10px"/>&nbsp;
+		            <div class="input-group-append">
+			            <button type="button" class="btn btn btn-primary" onclick="search();">검색</button>
+		            </div>
+	            </div>
+			</form>
+        	<div class="btn-wrap text-right pb-3">
+        		<select class="form-control large" id="pp" name="pp" onchange="chg_pp();" style="float:left;margin-top:20px; width:150px">
 					<option value="10" >10개씩 보기</option>
 					<option value="20" >20개씩 보기</option>
 					<option value="30" >30개씩 보기</option>
 				</select> 
-<!-- 				<select name="skey"> -->
-<!-- 	                <option value="a">제목</option> -->
-<!-- 	                <option value="b">내용</option> -->
-<!-- 	                <option value="c">작성자</option> -->
-<!-- 	            </select> -->
-<!-- 	            <input type="text" size="20" name="sval"/>&nbsp; -->
-<!-- 	            <button type="button" onclick="search();">검색</button> -->
-			</form>  
-        	<div class="btn-wrap text-right pb-3">
 	        	<button type="submit" class="btn btn-lg btn-primary" onclick="loc_write();">글 작성</button>
         	</div>
             <div class="main-box clearfix">
@@ -253,6 +269,7 @@ text-decoration:none;
                             <thead>
                                 <tr>
                                 <th><span>글 번호</span></th>
+                                <th><span>썸네일</span></th>
                                 <th><span>제목</span></th>
                                 <th><span>등록일</span></th>
                                 <th><span>작성자</span></th>
@@ -266,10 +283,17 @@ text-decoration:none;
                             		<c:forEach items="${thisList }" var="row" varStatus="i">
 	                                <tr>
 	                                    <td>${row.rnum }</td>
-	                                    <td><a href="./write.jsp?webtoon_idx=${row.webtoon_idx }" class="user-link">${row.webtoon_title }</a></td>
+	                                    <td>
+		                                    <c:if test="${row.sv_name ne null}">
+		                                    	 <div>
+ 			                                     	<img src="/upload/${row.sv_name }" width="150px">
+		                                    	 </div>
+		                                    </c:if>
+	                                    </td>
+	                                    <td><a href="javascript:void(0)" class="" onclick="loc_write('${row.webtoon_idx}');">${row.webtoon_title }</a></td>
 	                                    <td>${row.in_date_str }</td>
 	                                    <td>${row.webtoon_author }</td>
-	                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href = './write_action.jsp?webtoon_idx=${row.webtoon_idx}&act=D'">삭제하기</button></td>
+	                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href = './write_action.jsp?webtoon_idx=${row.webtoon_idx}&act=D&sv_name=${row.sv_name }'">삭제하기</button></td>
 	                                </tr>
 	                                
                             		</c:forEach>
@@ -285,7 +309,7 @@ text-decoration:none;
 	
 	if(startPage > pp){
 %>
-		<a href="./webtoon.jsp?pg=<%=startPage - 10%>&pp=<%=pp %>">[이전]</a>
+		<a href="./webtoon.jsp?pg=<%=startPage - 10%>&pp=<%=pp %>&skey=<%=skey %>&sval=<%=sval %>">[이전]</a>
 <%
 	}
 %>								
@@ -300,7 +324,7 @@ text-decoration:none;
 <%		
 		}else{
 %>
-			<a href="./webtoon.jsp?pg=<%=i %>&pp=<%=pp %>">[<%=i %>]</a>
+			<a href="./webtoon.jsp?pg=<%=i %>&pp=<%=pp %>&skey=<%=skey %>&sval=<%=sval %>">[<%=i %>]</a>
 <%			
 			
 		}
@@ -309,7 +333,7 @@ text-decoration:none;
 	if(endPage < pageNum){
 		
 %>
-			<a href="./webtoon.jsp?pg=<%=startPage + 10%>&pp=<%=pp %>">[다음]</a>
+			<a href="./webtoon.jsp?pg=<%=startPage + 10%>&pp=<%=pp %>&skey=<%=skey %>&sval=<%=sval %>">[다음]</a>
 <%
 		
 	}

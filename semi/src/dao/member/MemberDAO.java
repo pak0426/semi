@@ -108,4 +108,10 @@ public class MemberDAO {
 		
 		return result;
 	}
+	
+	/* method 	: ge
+	 * param	: MemberDTO 
+	 * result	: int
+	 * desc		: PW 중복 체크
+	 * */
 }

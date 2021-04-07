@@ -5,6 +5,9 @@
 <%
 	String session_login_id = (String) request.getSession().getAttribute("LOGIN_ID");	
 	String session_login_status = (String) request.getSession().getAttribute("LOGIN_STATUS");
+	String session_login_type = (String) request.getSession().getAttribute("LOGIN_TYPE");
+	
+	out.println(session_login_type);
 	
 	//변수 선언
 	String act = "I";
@@ -52,6 +55,12 @@
 	
 	if(request.getParameter("isOk") != null)  isOk = request.getParameter("isOk"); 
 	if(request.getParameter("type") != null)  type = request.getParameter("type");
+	
+	
+	boolean isWriter = false;
+	if(session_login_id.equals(webtoon_author)) {
+		isWriter = true;
+	}
 	
 %>
 <!DOCTYPE html>
@@ -186,60 +195,76 @@ img {
 	                <hr class="my-4" />
 	                <div class="form-group">
                         <label for="webtoon_title">제목</label>
-                        <input type="text" class="form-control" id="webtoon_title" name="webtoon_title" style="height:40px" value="<%=webtoon_title %>"/>
+                        <input type="text" class="form-control" id="webtoon_title" name="webtoon_title" style="height:40px" value="<%=webtoon_title %>" <%=isWriter ? "" : "readonly"  %>/>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">요약</label>
-                        <textarea class="form-control" id="webtoon_summary" name="webtoon_summary" style="height: 200px"><%=webtoon_summary %></textarea>
+                        <textarea class="form-control" id="webtoon_summary" name="webtoon_summary" style="height: 200px" <%=isWriter ? "" : "readonly"  %>><%=webtoon_summary %></textarea>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">내용</label>
-                        <textarea class="form-control" id="webtoon_content" name="webtoon_content" style="height: 200px"><%=webtoon_content %></textarea>
+                        <textarea class="form-control" id="webtoon_content" name="webtoon_content" style="height: 200px" <%=isWriter ? "" : "readonly"  %>><%=webtoon_content %></textarea>
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">작성자</label>
-                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:40px" value="<%=webtoon_author%>" readonly/>
+                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:40px" value="<%=webtoon_author%>" <%=isWriter ? "" : "readonly"  %>/>
 	                </div>
 	                <div class="form-group">
 	                	<label for="firstname">썸네일 이미지</label><br/>
 <%
 	if(!thum.equals("")){
 %>	                	
-					<div id="div_thum">
-	                	<label for="secondname">현재 썸네일 : <%=thum %></label>&nbsp;&nbsp;&nbsp;
-	                	<img src="/upload/<%=thum %>" width=600px>
-	                	<button type="button" class="btn btn-sm btn-danger" onclick="delThum();">삭제하기</button><br/><br/>
-	                </div>	
+						<div id="div_thum">
+		                	<label for="secondname">현재 썸네일 : <%=thum %></label>&nbsp;&nbsp;&nbsp;
+		                	<img src="/upload/<%=thum %>" width=600px>
+		                </div>	
 <%
 	}
 %>	                	
-	                	
-	                	<div class="spinner-border text-primary" role="status">
-	                        <span class="visually-hidden">* 이미지 권장 사이즈 : 600 * 400</span>
-	                	</div>
-                        <br/>
-	  				    <input class="form-control" type="file" id="thum" name="thum">
-	                </div>
+
+<%
+	if(isWriter){
+%>
+		                <div id="div_thum_sel">
+			                <button type="button" class="btn btn-sm btn-danger" onclick="delThum();">삭제하기</button><br/><br/>
+		                	<div class="spinner-border text-primary" role="status">
+		                        <span class="visually-hidden">* 이미지 권장 사이즈 : 600 * 400</span>
+		                	</div>
+		                    <br/>
+			  				<input class="form-control" type="file" id="thum" name="thum">
+		                </div>	
+<%		
+	}
+%>
+		            </div>
+<%	
+	if(isWriter){
+		if(webtoon_idx.equals("")){
+%>		
 	                <div class="form-group">
 	                	<label for="firstname">사용 여부</label>
-<%
-	if(webtoon_idx.equals("")){
-		
-%>	    
 						<label><input type="radio" id="use_y" name="use_yn" value="Y" checked/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
 						<label><input type="radio" id="use_n" name="use_yn" value="N" />&nbsp;미사용</label>
 <%
-	}else{
+		}else{
 %>
                     	<label><input type="radio" id="use_y" name="use_yn" value="Y" <%=use_yn.equals("Y") ? "checked" : "" %>/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
 						<label><input type="radio" id="use_n" name="use_yn" value="N" <%=use_yn.equals("N") ? "checked" : "" %>/>&nbsp;미사용</label>
 <%
+		}
 	}
 %>						
 						
 	                </div>
 	            </form>
+<%
+	if(session_login_id.equals(webtoon_author)){
+%>
                 <button type="submit" class="btn btn-primary" onclick="setForm();">저장</button>
+                <button type="submit" class="btn btn-danger" onclick="location.href = './write_action.jsp?webtoon_idx=<%=webtoon_idx %>&act=D&sv_name=<%=sv_name %>'">삭제</button>
+<%		
+	}
+%>	            
                 <button type="submit" class="btn btn-primary" onclick="location.href = './webtoon.jsp'">목록</button>
 	        </div>
 	    </div>

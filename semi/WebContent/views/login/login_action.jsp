@@ -69,6 +69,7 @@ public void setReturn(String isOk, String msg, HttpServletResponse response) {
 				isOk = "Y";
 				request.getSession().setAttribute("LOGIN_ID", memberDTO.getMember_id());
 				request.getSession().setAttribute("LOGIN_STATUS", "Y");
+				request.getSession().setAttribute("LOGIN_TYPE", memberDTO.getMember_type());
 				response.sendRedirect("/views/webtoon/webtoon.jsp?isOk=" + isOk);
 			}
 		}

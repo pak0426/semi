@@ -199,7 +199,6 @@ text-decoration:none;
 			alert("로그인 해주세요.");
 			return false;
 		}
-		
 		console.log("webtoon_idx : " + webtoon_idx);
 		
 		if(webtoon_idx == "" || webtoon_idx === undefined){
@@ -293,7 +292,7 @@ text-decoration:none;
 	                                    <td><a href="javascript:void(0)" class="" onclick="loc_write('${row.webtoon_idx}');">${row.webtoon_title }</a></td>
 	                                    <td>${row.in_date_str }</td>
 	                                    <td>${row.webtoon_author }</td>
-	                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href = './write_action.jsp?webtoon_idx=${row.webtoon_idx}&act=D&sv_name=${row.sv_name }'">삭제하기</button></td>
+<%-- 	                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href = './write_action.jsp?webtoon_idx=${row.webtoon_idx}&act=D&sv_name=${row.sv_name }'">삭제하기</button></td> --%>
 	                                </tr>
 	                                
                             		</c:forEach>

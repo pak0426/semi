@@ -52,7 +52,7 @@
 	SELECT 
 		MEMBER_TYPE 
 	FROM MEMBER
-	WHERE MEMBER_ID = #{member_idx};
+	WHERE MEMBER_ID = #{member_id}
 	</select>
 	
 </mapper>

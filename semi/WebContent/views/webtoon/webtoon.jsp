@@ -1,10 +1,10 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="dao.common.PagingUtil"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="dao.webtoon.WebtoonDAO"%>
 <%@page import="dao.webtoon.WebtoonDTO"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ include file="/views/inc/common.jsp"%>
 <%	
 	String session_login_id = "";
@@ -21,24 +21,74 @@
 		}
 	}
 	
-	//List
 	
-	//DTO
+	//DTO, DAO
 	WebtoonDTO webtoonDTO = new WebtoonDTO();
+	WebtoonDAO webtoonDAO = new WebtoonDAO();
+	
+	//search
+	String skey = "";
+	String sval = "";
+	
+	if(request.getParameter("skey") != null) 	skey = request.getParameter("skey"); 
+	if(request.getParameter("sval") != null) 	sval = request.getParameter("sval"); 
+	
+	webtoonDTO.setSkey(skey);
+	webtoonDTO.setSval(sval);
+	
+	//paging
+	int pg = 1;
+	int pp = 10;
+	
+	String req_pg = request.getParameter("pg");
+	String req_pp = request.getParameter("pp");
+	
+	if(req_pg != null) {
+		pg = Integer.parseInt(req_pg); 
+	}
+	if(req_pp != null){
+		pp = Integer.parseInt(req_pp); 
+	}
 
+	PagingUtil pagingUtil = new PagingUtil();
+	
+	HashMap param = new HashMap();
+	
+	HashMap<String, String> countMap = new HashMap<String, String>();
+	
+// 	countMap.put("skey", skey);
+// 	countMap.put("skey", s);
+	
+	int totalCount = webtoonDAO.getTotalCount(webtoonDTO);
+	
+	param = pagingUtil.paging(pg, pp, totalCount);
+	
+	Integer startRow = (Integer) param.get("startRow");
+	Integer endRow = (Integer) param.get("endRow");
+	Integer pageNum = (Integer) param.get("pageNum");
+	Integer startPage = (Integer) param.get("startPage");
+	Integer endPage = (Integer) param.get("endPage");
+	
+	webtoonDTO.setStartRow(startRow);
+	webtoonDTO.setEndRow(endRow);
+	
+	
+	//List
 	List<WebtoonDTO> thisList = new ArrayList<WebtoonDTO>();
 	
-	//DAO
-	WebtoonDAO webtoonDAO = new WebtoonDAO();
-	thisList = webtoonDAO.getWebtoonList();
+	//DAO	
+	thisList = webtoonDAO.getWebtoonList(webtoonDTO);
 	
-	if(thisList != null){
-// 		for(WebtoonDTO row : thisList){
-// 			out.println("list : " + row.getWebtoon_title());
-// 		}
+	if(thisList != null)	{
 		request.setAttribute("thisList", thisList);
 	}
 	
+	//isOk, msg
+	String isOk = "";
+	String type  = "";
+	
+	if(request.getParameter("isOk") != null)  isOk = request.getParameter("isOk"); 
+	if(request.getParameter("type") != null)  type = request.getParameter("type");
 	
 %>
 
@@ -48,7 +98,7 @@
 <link type="text/css" rel="stylesheet" href="/res/css/base.css">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Board</title>
 <style type="text/css">
 body{
     background:#eee;    
@@ -100,6 +150,7 @@ a {
 .table thead tr th {
     text-transform: uppercase;
     font-size: 0.875em;
+    text-align : center;
 }
 .table thead tr th {
     border-bottom: 2px solid #e7ebee;
@@ -107,12 +158,14 @@ a {
 .table tbody tr td:first-child {
     font-size: 1.125em;
     font-weight: 300;
+    text-align : center;
 }
 .table tbody tr td {
     font-size: 0.875em;
     vertical-align: middle;
     border-top: 1px solid #e7ebee;
     padding: 12px 8px;
+    text-align : center;
 }
 a:hover{
 text-decoration:none;
@@ -122,15 +175,63 @@ text-decoration:none;
 	const session_login_id 	   = "<%=session_login_id %>";
 	const session_login_status = "<%=session_login_status %>";
 	
-	function loc_write(){
-		if(session_login_id == "" && session_login_status == ""){
-			alert("로그인 하셔야 글 작성이 가능합니다.");
-			return false;
-			
+	let isOk = "<%=isOk %>"; 
+	let type = "<%=type %>";
+	
+	$(document).ready(function(){
+		if(isOk == "Y"){
+			if(type == "DEL_SUCC"){
+				alert("삭제에 성공하였습니다.");
+				location.href = "./webtoon.jsp";
+			}
 		}else{
-			location.href="./write.jsp";
+			if(type == "DEL_FAIL"){
+				alert("삭제에 실패하였습니다.");				
+				location.href = "./webtoon.jsp";
+			}else if(type == "VAL_FAIL"){
+				alert("필수값이 누락되었습니다.");				
+				location.href = "./webtoon.jsp";
+			}	
 		}
 		
+		$("#pp").val(<%=pp %>).prop("selected", true);
+	});
+	
+	function loc_write(webtoon_idx){
+		
+		if(webtoon_idx == "" || webtoon_idx === undefined){
+			if(session_login_id == "" && session_login_status == ""){
+				alert("로그인 해주세요.");
+				return false;
+			}
+			location.href="./write.jsp";
+		}
+		else{
+			location.href="./write.jsp?webtoon_idx="+webtoon_idx;
+		}
+		
+	}
+	
+	function chg_pp(){
+		let pp = $("#pp").val();
+		let pg = "<%=pg %>";
+		
+		if(pg == "") pg=1;
+		
+		location.href = "./webtoon.jsp?pg=" + pg + "&pp=" + pp;
+	}
+	
+	function search(){
+		console.log("search");
+		var skey = $("#skey").val();
+		var sval = $("#sval").val();
+		
+		if(skey != "" && sval != ""){
+			location.href = "./webtoon.jsp?skey="+skey+"&sval="+sval;
+		}
+		
+		console.log("skey : " + skey);
+		console.log("sval : " + sval);
 	}
 </script>
 </head>
@@ -140,21 +241,40 @@ text-decoration:none;
 	<%@ include file="../inc/top.jsp" %>
     <div class="row">
         <div class="col-lg-12">
-        	<div class="btn-wrap text-right pb-3">
-	        	<button type="submit" class="btn btn-lg btn-primary" onclick="loc_write();">글 작성</button>
+       		<form id="searchForm" name="searchForm" action="./write_action.jsp"><br/>
+	            <div class="input-group">
+					<select class="form-control" id="skey" name="skey" style="">
+		                <option value="a" <%=skey.equals("a") ? "selected" : "" %>>제목</option>
+		                <option value="b" <%=skey.equals("b") ? "selected" : "" %>>내용</option>
+		                <option value="c" <%=skey.equals("c") ? "selected" : "" %>>작성자</option>
+		            </select>
+		            <input type="text" class="ml-2 py-2 w-75 h-100" id="sval" name="sval" value="<%=sval %>"/>
+		            <div class="input-group-append">
+			            <button type="button" class="btn btn btn-primary" onclick="search();">검색</button>
+		            </div>
+	            </div>
+			</form>
+        	<div class="btn-wrap mt-3 pb-3 text-right clearfix">
+        		<select class="form-control large float-left d-inline-block" id="pp" name="pp" onchange="chg_pp();" style="width:150px">
+					<option value="10" >10개씩 보기</option>
+					<option value="20" >20개씩 보기</option>
+					<option value="30" >30개씩 보기</option>
+				</select> 
+	        	<button type="submit" class="btn btn-primary" onclick="loc_write();">글 작성</button>
         	</div>
             <div class="main-box clearfix">
                 <div class="main-box-body clearfix">
                     <div class="table-responsive" >
+                    	<span class="d-block my-2 ml-3">총 개수 : <%= totalCount %></span>
                         <table class="table user-list">
                             <thead>
                                 <tr>
                                 <th><span>글 번호</span></th>
+                                <th><span>썸네일</span></th>
                                 <th><span>제목</span></th>
                                 <th><span>등록일</span></th>
                                 <th><span>작성자</span></th>
-                                <th><span>Status</span></th>
-                                <th><span>Email</span></th>
+<!--                                 <th><span>Email</span></th> -->
                                 <th>&nbsp;</th>
                                 </tr>
                             </thead>
@@ -162,49 +282,65 @@ text-decoration:none;
                             <c:choose>
                             	<c:when test="${fn:length(thisList) ne 0}">
                             		<c:forEach items="${thisList }" var="row" varStatus="i">
-<%--                             		${row.webtoon_title } --%>
 	                                <tr>
+	                                    <td>${row.rnum }</td>
 	                                    <td>
-	                                    ${row.webtoon_idx }
+		                                    <c:if test="${row.sv_name ne null}">
+		                                    	 <div>
+ 			                                     	<img src="/upload/${row.sv_name }" width="150px">
+		                                    	 </div>
+		                                    </c:if>
 	                                    </td>
-	                                    <td>
-	                                    <a href="#" class="user-link">${row.webtoon_title }</a>
-	                                    </td>
-	                                    <td>
-	                                        
-	                                    </td>
-	                                    <td>${row.in_date }</td>
-	                                    <td>
-	                                        <span class="label label-default">${row.webtoon_author }</span>
-	                                    </td>
-	                                    <td>
-	                                        <a href="#">marlon@brando.com</a>
-	                                    </td>
-	                                    <td style="width: 20%;">
-	                                        <a href="#" class="table-link text-warning">
-	                                            <span class="fa-stack">
-	                                                <i class="fa fa-square fa-stack-2x"></i>
-	                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-	                                            </span>
-	                                        </a>
-	                                        <a href="#" class="table-link text-info">
-	                                            <span class="fa-stack">
-	                                                <i class="fa fa-square fa-stack-2x"></i>
-	                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-	                                            </span>
-	                                        </a>
-	                                        <a href="#" class="table-link danger">
-	                                            <span class="fa-stack">
-	                                                <i class="fa fa-square fa-stack-2x"></i>
-	                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-	                                            </span>
-	                                        </a>
-	                                    </td>
+	                                    <td><a href="javascript:void(0)" class="" onclick="loc_write('${row.webtoon_idx}');">${row.webtoon_title }</a></td>
+	                                    <td>${row.in_date_str }</td>
+	                                    <td>${row.webtoon_author }</td>
+<%-- 	                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="location.href = './write_action.jsp?webtoon_idx=${row.webtoon_idx}&act=D&sv_name=${row.sv_name }'">삭제하기</button></td> --%>
 	                                </tr>
+	                                
                             		</c:forEach>
                             	</c:when>
                             </c:choose>
                             </tbody>
+                            <tr>
+								<td colspan="6" align="center">
+<%
+	if(endPage > pageNum) {
+		endPage = pageNum;
+	}
+	
+	if(startPage > pp){
+%>
+		<a href="./webtoon.jsp?pg=<%=startPage - 10%>&pp=<%=pp %>&skey=<%=skey %>&sval=<%=sval %>">[이전]</a>
+<%
+	}
+%>								
+<%
+	
+	for(int i=startPage; i<=endPage; i++){
+		
+		if(i == pg){
+			
+%>
+								[<%=i %>]
+<%		
+		}else{
+%>
+			<a href="./webtoon.jsp?pg=<%=i %>&pp=<%=pp %>&skey=<%=skey %>&sval=<%=sval %>">[<%=i %>]</a>
+<%			
+			
+		}
+	}
+	
+	if(endPage < pageNum){
+		
+%>
+			<a href="./webtoon.jsp?pg=<%=startPage + 10%>&pp=<%=pp %>&skey=<%=skey %>&sval=<%=sval %>">[다음]</a>
+<%
+		
+	}
+%>
+								</td>
+							</tr>	
                         </table>
                     </div>
                 </div>

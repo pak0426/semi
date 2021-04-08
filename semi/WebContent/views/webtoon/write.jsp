@@ -5,6 +5,7 @@
 <%
 	String session_login_id = (String) request.getSession().getAttribute("LOGIN_ID");	
 	String session_login_status = (String) request.getSession().getAttribute("LOGIN_STATUS");
+	String session_login_type = (String) request.getSession().getAttribute("LOGIN_TYPE");
 	
 	//변수 선언
 	String act = "I";
@@ -14,9 +15,11 @@
 	String webtoon_summary	 = "";
 	String webtoon_content	 = "";
 	String webtoon_author	 = "";
+	String in_admin			 = "";
 	String thum				 = "";
 	String use_yn 			 = "";
 	String use_yn_str		 = "";
+	String sv_name			 = "";
 	
 	
 	
@@ -35,16 +38,22 @@
 		webtoonDTO = webtoonDAO.getWebtoon(webtoon_idx);
 		
 		if(webtoonDTO != null){
-			webtoon_title 	 = webtoonDTO.getWebtoon_title();
-			webtoon_summary	 = webtoonDTO.getWebtoon_summary();
-			webtoon_content	 = webtoonDTO.getWebtoon_content();
-			webtoon_author	 = webtoonDTO.getWebtoon_author();
-			thum			 = webtoonDTO.getThum();
-			use_yn 			 = webtoonDTO.getUse_yn();
-			
-			//${use_yn}에 저장
-			request.setAttribute("use_yn", use_yn);
+			if(webtoonDTO.getWebtoon_title() != null) 	webtoon_title 	 = webtoonDTO.getWebtoon_title();
+			if(webtoonDTO.getWebtoon_summary() != null) webtoon_summary	 = webtoonDTO.getWebtoon_summary();
+			if(webtoonDTO.getWebtoon_content() != null) webtoon_content	 = webtoonDTO.getWebtoon_content();
+			if(webtoonDTO.getWebtoon_author() != null) 	webtoon_author	 = webtoonDTO.getWebtoon_author();
+			if(webtoonDTO.getIn_admin() != null) 		in_admin	 	 = webtoonDTO.getIn_admin();
+			if(webtoonDTO.getThum() != null) 			thum			 = webtoonDTO.getThum();
+			if(webtoonDTO.getUse_yn() != null) 			use_yn 			 = webtoonDTO.getUse_yn();
+			if(webtoonDTO.getSv_name() != null) 		sv_name			 = webtoonDTO.getSv_name();
 		}
+	}
+	
+	boolean isWriter = false;
+	System.out.println("=============in_admin : " + in_admin);
+	System.out.println("=============session_login_id : " + session_login_id);
+	if(in_admin.equals(session_login_id)){
+		isWriter = true;
 	}
 	
 	//isOk, msg
@@ -53,6 +62,8 @@
 	
 	if(request.getParameter("isOk") != null)  isOk = request.getParameter("isOk"); 
 	if(request.getParameter("type") != null)  type = request.getParameter("type");
+	
+	
 %>
 <!DOCTYPE html>
 <html>
@@ -98,9 +109,14 @@ img {
 <script type="text/javascript">
 	let webtoon_idx = "<%=webtoon_idx %>";
 	let isOk = "<%=isOk %>"; 
-	let type = "<%=type %>"; 
-		
-	$(document).ready(function(){	
+	let type = "<%=type %>";
+	let isWriter = "<%=isWriter%>";
+	let login_type = "<%=session_login_type %>"
+	
+	$(document).ready(function(){
+		if(isWriter == "false" && login_type != "admin" && webtoon_idx != ""){
+			ChkWriter();
+		}
 		
 		if(isOk == "Y"){
 			if(type == "SET_SUCC"){
@@ -120,21 +136,29 @@ img {
 			}else if(type == "MOD_FAIL"){
 				alert("수정에 실패하였습니다.");
 				location.href = "./write.jsp?webtoon_idx=" + webtoon_idx;
-			}
+			}else if(type == "VAL_FAIL"){
+				alert("필수값이 누락되었습니다.");
+				location.href = "./write.jsp?webtoon_idx=" + webtoon_idx;
+			}	
 		}
 	});
 
 	function setForm(){
-// 		if($("#webtoon_title").val() == ""){
-// 			alert("제목을 입력해주세요.");
-// 			$("#webtoon_title").focus();
-// 			return false;
-// 		}
-// 		if($("#webtoon_content").val() == ""){
-// 			alert("내용을 입력해주세요.");
-// 			$("#webtoon_content").focus();
-// 			return false;
-// 		}
+		if($("#webtoon_title").val() == ""){
+			alert("제목을 입력해주세요.");
+			$("#webtoon_title").focus();
+			return false;
+		}
+		if($("#webtoon_content").val() == ""){
+			alert("내용을 입력해주세요.");
+			$("#webtoon_content").focus();
+			return false;
+		}
+		if($("#webtoon_author").val() == ""){
+			alert("작성자를 입력해주세요.");
+			$("#webtoon_content").focus();
+			return false;
+		}
 			
 		$("#writeForm").submit();
 	}
@@ -145,9 +169,46 @@ img {
         results = regex.exec(location.search);
     	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
+	
+	function delThum(){
+		let data_ = {
+			 webtoon_idx : "<%=webtoon_idx %>"
+			,act : "delThum"
+			,sv_name : "<%=sv_name %>"
+		}
+		
+		$.ajax({
+			type : "POST"
+			,url : "./write_action.jsp"
+			,data : data_			
+			,success : function(result){
+				var data = result.jsonObj;
+				console.log(data);
+				alert("삭제되었습니다.");
+				$("#div_thum").hide();
+			}
+			,error : function(request, status, error){
+				console.log("code : " + request.status + "\n" + "message :" + request.responseText + "\n" + "error : " + error);
+				alert("오류가 발생했습니다. \n다시 시도해주세요.");
+				return false;
+			}
+		});
+	}
+	
+	function ChkWriter(){
+		$("#webtoon_title").attr("readonly","true")
+		$("#webtoon_summary").attr("readonly","true")
+		$("#webtoon_content").attr("readonly","true")
+		$("#webtoon_author").attr("readonly","true")
+		$("#div_thum_sel").hide();
+		$("#div_use").hide();
+		$("#set_btn").hide();
+		$("#del_btn").hide();
+		$("#del_thum_btn").hide();
+	}
 </script>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Write</title>
 </head>
 <body>
 <div class="container bootstrap snippets bootdey m-auto">
@@ -156,8 +217,7 @@ img {
 	    <div class="col-lg-12">
 	        <h2 class="h3 mb-4 page-title">write</h2>
 	        <div class="my-4">
-	            <form class="form-horizontal" id="writeForm" name="writeForm" action="./write_action.jsp" method="post">
-	            <input type ="hidden" id="act" name="act" value="<%=act %>" />
+	            <form enctype="multipart/form-data" class="form-horizontal" id="writeForm" name="writeForm" action="./write_action.jsp?act=<%=act %>" method="post">
 	            <input type ="hidden" id="webtoon_idx" name="webtoon_idx" value="<%=webtoon_idx %>" />
 	                <hr class="my-4" />
 	                <div class="form-group">
@@ -174,25 +234,51 @@ img {
 	                </div>
 	                <div class="form-group">
                         <label for="firstname">작성자</label>
-                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:40px" value="<%=webtoon_author %>"/>
+                        <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height:40px" value="<%=webtoon_author%>"/>
 	                </div>
 	                <div class="form-group">
-	                	<label for="firstname">썸네일 이미지</label>
-	                	<br/>
-	                	<div class="spinner-border text-primary" role="status">
-	                        <span class="visually-hidden">* 이미지 권장 사이즈 : 600 * 400</span>
-	                	</div>
-                        <br/>
-	  				    <input class="form-control" type="file" id="formFile">
-	                </div>
-	                <div class="form-group">
+	                	<label for="firstname">썸네일 이미지</label><br/>
+<%
+	if(!thum.equals("")){
+%>	                	
+						<div id="div_thum">
+		                	<img src="/upload/<%=thum %>" width=600px>
+		                	<label class="d-block mt-2" for="secondname">현재 썸네일 : <%=thum %></label>
+			                <button type="button" id="del_thum_btn" class="btn btn-sm btn-danger" onclick="delThum();">삭제하기</button><br/><br/>
+		                </div>	
+<%
+	}
+%>	                	
+
+		                <div id="div_thum_sel">
+		                	<div class="spinner-border text-primary" role="status">
+		                        <span class="visually-hidden">* 이미지 권장 사이즈 : 600 * 400</span>
+		                	</div>
+		                    <br/>
+			  				<input class="form-control" type="file" id="thum" name="thum">
+		                </div>	
+		            </div>
+	                <div class="form-group" id="div_use">
+<%	
+		if(webtoon_idx.equals("")){
+%>		
 	                	<label for="firstname">사용 여부</label>
-                        <label><input type="radio" id="use_y" name="use_yn" value="Y" ${use_yn eq 'Y' ? 'checked' : '' }/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
-						<label><input type="radio" id="use_n" name="use_yn" value="N" ${use_yn eq 'N' ? 'checked' : '' }/>&nbsp;미사용</label>
+						<label><input type="radio" id="use_y" name="use_yn" value="Y" checked/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
+						<label><input type="radio" id="use_n" name="use_yn" value="N" />&nbsp;미사용</label>
+<%
+		}else{
+%>
+                    	<label><input type="radio" id="use_y" name="use_yn" value="Y" <%=use_yn.equals("Y") ? "checked" : "" %>/>&nbsp;사용</label>&nbsp;&nbsp;&nbsp;
+						<label><input type="radio" id="use_n" name="use_yn" value="N" <%=use_yn.equals("N") ? "checked" : "" %>/>&nbsp;미사용</label>
+<%
+		}
+%>						
+						
 	                </div>
 	            </form>
-                <button type="submit" class="btn btn-primary" onclick="setForm();">저장</button>
                 <button type="submit" class="btn btn-primary" onclick="location.href = './webtoon.jsp'">목록</button>
+                <button type="submit" id="set_btn" class="btn btn-primary float-right" onclick="setForm();" style="margin-left:20px">저장</button>
+		        <button type="submit" id="del_btn" class="btn btn-danger float-right" onclick="location.href = './write_action.jsp?webtoon_idx=<%=webtoon_idx %>&act=D&sv_name=<%=sv_name %>'">삭제</button>
 	        </div>
 	    </div>
 	</div>

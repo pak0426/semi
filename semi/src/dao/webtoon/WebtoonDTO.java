@@ -18,6 +18,19 @@ public class WebtoonDTO {
 	private String img;
 	private String img_ori;
 	private int dp_cnt;
+	private String rnum;
+	private String in_date_str;
+	private int totalCount;
+	private int startRow;
+	private int endRow;
+	private String skey;
+	private String sval;
+	private String sv_name;
+	private int nextVal;
+	
+	
+	
+	
 	
 	
 	public String getWebtoon_idx() {
@@ -109,5 +122,61 @@ public class WebtoonDTO {
 	}
 	public void setDp_cnt(int dp_cnt) {
 		this.dp_cnt = dp_cnt;
+	}
+	
+	
+	public String getRnum() {
+		return rnum;
+	}
+	public void setRnum(String rownum) {
+		this.rnum = rownum;
+	}
+	public String getIn_date_str() {
+		return in_date_str;
+	}
+	public void setIn_date_str(String in_date_str) {
+		this.in_date_str = in_date_str;
+	}
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+	public int getStartRow() {
+		return startRow;
+	}
+	public void setStartRow(int startRow) {
+		this.startRow = startRow;
+	}
+	public int getEndRow() {
+		return endRow;
+	}
+	public void setEndRow(int endRow) {
+		this.endRow = endRow;
+	}
+	public String getSkey() {
+		return skey;
+	}
+	public void setSkey(String skey) {
+		this.skey = skey;
+	}
+	public String getSval() {
+		return sval;
+	}
+	public void setSval(String sval) {
+		this.sval = sval;
+	}
+	public String getSv_name() {
+		return sv_name;
+	}
+	public void setSv_name(String sv_name) {
+		this.sv_name = sv_name;
+	}
+	public int getNextVal() {
+		return nextVal;
+	}
+	public void setNextVal(int nextVal) {
+		this.nextVal = nextVal;
 	}
 }

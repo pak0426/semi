@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <div id="header">
 	<h1 class="logo">
-		<a href="javascript:;">
+		<a href="./webtoon.jsp">
 			<strong>Board</strong>
 			<span>Board List</span>
 		</a>
@@ -9,7 +9,10 @@
 
 	<div class="ui_menu">
 		<ul>
+		
 <%
+if(session_login_status == null) session_login_status = "";
+
 if(session_login_status.equals("Y")){
 %>	
 			<li class="out"><a onclick="logout_inc('<%=session_login_id %>');" href="javascript:;">로그아웃</a></li>
@@ -21,7 +24,7 @@ if(session_login_status.equals("Y")){
 }
 %>
 		</ul>
-		<button type="button" class="login">${session_login_id }</button>
+		<button type="button" class="login"><%=session_login_id %></button>
 	</div>
 </div>
 <script type="text/javascript">

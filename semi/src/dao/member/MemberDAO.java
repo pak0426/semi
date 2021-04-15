@@ -16,12 +16,6 @@ public class MemberDAO {
 	private SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
 	private SqlSession sqlSession;
 	
-	public List<MemberDTO> getMemberList(){
-		List<MemberDTO> list = new ArrayList<>();
-		
-		return null;
-	}
-	
 	/* method 	: setMember
 	 * param	: MemberDTO 
 	 * result	: int

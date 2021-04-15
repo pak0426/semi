@@ -11,7 +11,10 @@
 		<ul>
 		
 <%
-if(session_login_status == null) session_login_status = "";
+if(session_login_status == null) {
+	session_login_status = "";
+	session_login_id = "비회원";
+}
 
 if(session_login_status.equals("Y")){
 %>	

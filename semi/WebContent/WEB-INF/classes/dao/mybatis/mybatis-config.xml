@@ -15,6 +15,7 @@
 	<typeAliases>
  		<typeAlias type="dao.member.MemberDTO" alias="Member"/>
  		<typeAlias type="dao.webtoon.WebtoonDTO" alias="Webtoon"/>
+ 		<typeAlias type="dao.reply.ReplyDTO" alias="Reply"/>
 	</typeAliases>
 	
 	<environments default="development">
@@ -33,5 +34,6 @@
 		<mapper resource="dao/mybatis/sqlMap/Webtoon.xml"/>
 		<mapper resource="dao/mybatis/sqlMap/Member.xml"/>
 		<mapper resource="dao/mybatis/sqlMap/File.xml"/>
+		<mapper resource="dao/mybatis/sqlMap/Reply.xml"/>
 	</mappers>
 </configuration>

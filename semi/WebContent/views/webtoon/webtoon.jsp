@@ -1,3 +1,4 @@
+<%@page import="dao.common.BaseDAO"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="dao.common.PagingUtil"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -23,8 +24,9 @@
 	
 	
 	//DTO, DAO
-	WebtoonDTO webtoonDTO = new WebtoonDTO();
+	BaseDAO baseDAO = new BaseDAO();
 	WebtoonDAO webtoonDAO = new WebtoonDAO();
+	HashMap<String, Object> param = new HashMap<String, Object>();
 	
 	//search
 	String skey = "";
@@ -33,8 +35,8 @@
 	if(request.getParameter("skey") != null) 	skey = request.getParameter("skey"); 
 	if(request.getParameter("sval") != null) 	sval = request.getParameter("sval"); 
 	
-	webtoonDTO.setSkey(skey);
-	webtoonDTO.setSval(sval);
+	param.put("skey", skey);
+	param.put("sval", sval);
 	
 	//paging
 	int pg = 1;
@@ -52,14 +54,7 @@
 
 	PagingUtil pagingUtil = new PagingUtil();
 	
-	HashMap param = new HashMap();
-	
-	HashMap<String, String> countMap = new HashMap<String, String>();
-	
-// 	countMap.put("skey", skey);
-// 	countMap.put("skey", s);
-	
-	int totalCount = webtoonDAO.getTotalCount(webtoonDTO);
+	int totalCount = webtoonDAO.getTotalCount(param);
 	
 	param = pagingUtil.paging(pg, pp, totalCount);
 	
@@ -69,19 +64,16 @@
 	Integer startPage = (Integer) param.get("startPage");
 	Integer endPage = (Integer) param.get("endPage");
 	
-	webtoonDTO.setStartRow(startRow);
-	webtoonDTO.setEndRow(endRow);
+	param.put("skey", skey);
+	param.put("sval", sval);
+	param.put("startRow", startRow);
+	param.put("endRow", endRow);
+	
 	
 	
 	//List
-	List<WebtoonDTO> thisList = new ArrayList<WebtoonDTO>();
-	
-	//DAO	
-	thisList = webtoonDAO.getWebtoonList(webtoonDTO);
-	
-	if(thisList != null)	{
-		request.setAttribute("thisList", thisList);
-	}
+	List<HashMap<String, Object>> thisList = new ArrayList<HashMap<String, Object>>();
+	thisList = webtoonDAO.getWebtoonList(param);
 	
 	//isOk, msg
 	String isOk = "";
@@ -179,6 +171,7 @@ text-decoration:none;
 	let type = "<%=type %>";
 	
 	$(document).ready(function(){
+		
 		if(isOk == "Y"){
 			if(type == "DEL_SUCC"){
 				alert("삭제에 성공하였습니다.");
@@ -279,26 +272,32 @@ text-decoration:none;
                                 </tr>
                             </thead>
                             <tbody>
-                            <c:choose>
-                            	<c:when test="${fn:length(thisList) ne 0}">
-                            		<c:forEach items="${thisList }" var="row" varStatus="i">
+<%
+	for(int i=0; i<thisList.size(); i++){
+		HashMap<String, Object> row = new HashMap<String, Object>();
+		row = thisList.get(i);
+%>                            
 	                                <tr>
-	                                    <td>${row.rnum }</td>
+	                                    <td><%=row.get("RNUM") %></td>
 	                                    <td>
-		                                    <c:if test="${row.sv_name ne null}">
+<%
+	if(row.get("SV_NAME") != null){
+%>		                                    
 		                                    	 <div>
- 			                                     	<img src="/upload/${row.sv_name }" width="150px">
+ 			                                     	<img src="/upload/<%=row.get("SV_NAME") %>" width="150px">
 		                                    	 </div>
-		                                    </c:if>
+<%
+	}
+%>		                                    	 
 	                                    </td>
-	                                    <td><a href="javascript:void(0)" class="" onclick="loc_write('${row.webtoon_idx}');">${row.webtoon_title }</a></td>
-	                                    <td>${row.in_date_str }</td>
-	                                    <td>${row.webtoon_author }</td>
+	                                    <td><a href="javascript:void(0)" class="" onclick="loc_write('<%=row.get("WEBTOON_IDX") %>');"><%=row.get("WEBTOON_TITLE") %></a></td>
+	                                    <td><%=row.get("IN_DATE_STR") %></td>
+	                                    <td><%=row.get("WEBTOON_AUTHOR")%></td>
 	                                </tr>
-	                                
-                            		</c:forEach>
-                            	</c:when>
-                            </c:choose>
+                            
+<%
+	}
+%>                            
                             </tbody>
                             <tr>
 								<td colspan="6" align="center">

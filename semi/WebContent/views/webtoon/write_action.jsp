@@ -1,12 +1,10 @@
 <%@page import="dao.common.FileDAO"%>
 <%@page import="dao.common.CommonDAO"%>
-<%@page import="dao.common.FileDTO"%>
 <%@page import="java.io.File"%>
 <%@page import="java.util.*"%>
 <%@page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"%>
 <%@page import="com.oreilly.servlet.MultipartRequest"%>
 <%@page import="dao.webtoon.WebtoonDAO"%>
-<%@page import="dao.webtoon.WebtoonDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%!
 	public String getIp(HttpServletRequest request) {
@@ -131,44 +129,42 @@
 		//INSERT 후 REDIRECT할 webtoon_idx
 		int nextVal = webtoonDAO.getNextVal();
 		
-		//DTO
-		WebtoonDTO webtoonDTO = new WebtoonDTO();
-		FileDTO fileDTO = new FileDTO();
+		//MAP
+		HashMap<String, Object> webtoonMap = new HashMap<String, Object>();
+		HashMap<String, Object> fileMap = new HashMap<String, Object>();
 		
-		//DTO SET
 		in_admin = (String) request.getSession().getAttribute("LOGIN_ID");
 		
 		out.println("<br/>");
 		out.println("nextVal : " + nextVal);
 		
-		webtoonDTO.setNextVal(nextVal);
-		webtoonDTO.setWebtoon_title(webtoon_title);
-		webtoonDTO.setWebtoon_content(webtoon_content);
-		webtoonDTO.setWebtoon_summary(webtoon_summary);
-		webtoonDTO.setWebtoon_author(webtoon_author);
-		webtoonDTO.setUse_yn(use_yn);
-		webtoonDTO.setThum(thum);
-		webtoonDTO.setIn_admin(in_admin);		
+		webtoonMap.put("nextVal", nextVal);
+		webtoonMap.put("webtoon_title", webtoon_title);
+		webtoonMap.put("webtoon_content", webtoon_content);
+		webtoonMap.put("webtoon_summary", webtoon_summary);
+		webtoonMap.put("webtoon_author", webtoon_author);
+		webtoonMap.put("use_yn", use_yn);
+		webtoonMap.put("thum", thum);
+		webtoonMap.put("in_admin", in_admin);
 		
 		int file_result = 0;
 		//FILE DTO CHECK
 		if(check){
+			webtoonMap.put("thum", ori_name);
 			
-			webtoonDTO.setThum(ori_name);
-			
-			fileDTO.setFile_type(file_type);
-			fileDTO.setPa_idx(Integer.toString(nextVal));
-			fileDTO.setOri_name(ori_name);
-			fileDTO.setSv_name(file_name);
-			fileDTO.setIn_user(in_admin);
-			fileDTO.setIn_ip(getIp(request));
+			fileMap.put("file_type", file_type);
+			fileMap.put("pa_idx", Integer.toString(nextVal));
+			fileMap.put("ori_name", ori_name);
+			fileMap.put("sv_name", file_name);
+			fileMap.put("in_user", in_admin);
+			fileMap.put("in_ip", getIp(request));
 			
 			//파일 업로드
-			file_result = commonDAO.file_upload(fileDTO);
+			file_result = commonDAO.file_upload(fileMap);
 		}
 		
 		//등록
-		int result = webtoonDAO.setWebtoon(webtoonDTO);
+		int result = webtoonDAO.setWebtoon(webtoonMap);
 		
 		out.println("<br/>");
 		out.println("result : " + result);
@@ -181,12 +177,12 @@
 		if(result == 1){
 			isOk = "Y";
 			type = "SET_SUCC";
-			response.sendRedirect("./write.jsp?webtoon_idx=" + nextVal + "&isOk=" + isOk + "&type=" + type);
+// 			response.sendRedirect("./write.jsp?webtoon_idx=" + nextVal + "&isOk=" + isOk + "&type=" + type);
 		}else{
 			//등록 실패시
 			isOk = "N";
 			type = "SET_FAIL";
-			response.sendRedirect("./write.jsp?isOk=" + isOk + "&type=" + type);
+// 			response.sendRedirect("./write.jsp?isOk=" + isOk + "&type=" + type);
 		}
  	}
 	//수정시	***********************************************************************************************************************************************
@@ -201,8 +197,9 @@
 		
 		//파라미터를 위한 변수들 생성
 		if(multi.getParameter("webtoon_idx") != null) 		webtoon_idx = multi.getParameter("webtoon_idx");
-		WebtoonDTO webtoonDTO = new WebtoonDTO();
-		webtoonDTO = webtoonDAO.getWebtoon(webtoon_idx);
+		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+		
+		rtnMap = webtoonDAO.getWebtoon(webtoon_idx);
 		
 		//File PROCESS
 		Enumeration files = multi.getFileNames();
@@ -223,7 +220,7 @@
 				
 				HashMap<String, Object> param = new HashMap<String, Object>();
 				param.put("pa_idx", webtoon_idx);
-				param.put("sv_name", webtoonDTO.getSv_name());
+				param.put("sv_name", rtnMap.get("SV_NAME"));
 				
 				//기존에 있던 썸네일 데이터 삭제
 				commonDAO.delFile(param);
@@ -253,47 +250,40 @@
 			 return;
 		 }
 		
-		//DTO
-		webtoonDTO = new WebtoonDTO();
-		FileDTO fileDTO = new FileDTO();
+		//Map SET
+		HashMap<String, Object> webtoonMap = new HashMap<String, Object>();
+		HashMap<String, Object> fileMap = new HashMap<String, Object>();
+		webtoonMap.put("webtoon_idx", webtoon_idx);
+		webtoonMap.put("webtoon_title", webtoon_title);
+		webtoonMap.put("webtoon_content", webtoon_content);
+		webtoonMap.put("webtoon_summary", webtoon_summary);
+		webtoonMap.put("webtoon_author", webtoon_author);
+		webtoonMap.put("use_yn", use_yn);
 		
-		//DTO SET
-		webtoonDTO.setWebtoon_idx(webtoon_idx);
-		webtoonDTO.setWebtoon_title(webtoon_title);
-		webtoonDTO.setWebtoon_content(webtoon_content);
-		webtoonDTO.setWebtoon_summary(webtoon_summary);
-		webtoonDTO.setWebtoon_author(webtoon_author);
-		webtoonDTO.setUse_yn(use_yn);
-		
+		in_admin = (String) request.getSession().getAttribute("LOGIN_ID");
+		webtoonMap.put("in_admin", in_admin);
 		
 		//FILE DTO CHECK
 		int file_result = 0;
 		if(check){
-			webtoonDTO.setThum(ori_name);
+			webtoonMap.put("thum", ori_name);
 			
-			fileDTO.setFile_type(file_type);
-			fileDTO.setPa_idx(webtoon_idx);
-			fileDTO.setOri_name(ori_name);
-			fileDTO.setSv_name(file_name);
-			fileDTO.setIn_user(in_admin);
-			fileDTO.setIn_ip(getIp(request));
+			fileMap.put("file_type", file_type);
+			fileMap.put("pa_idx", webtoon_idx);
+			fileMap.put("ori_name", ori_name);
+			fileMap.put("sv_name", file_name);
+			fileMap.put("in_user", in_admin);
+			fileMap.put("in_ip", getIp(request));
 			
 			//파일 업로드
-			file_result = commonDAO.file_upload(fileDTO);
+			file_result = commonDAO.file_upload(fileMap);
 		}
 		out.println("<br/>");
 		out.println("file_result : " + file_result);
-		
 		//FILE DTO CHECK
-		
-		in_admin = (String) request.getSession().getAttribute("LOGIN_ID");
-		webtoonDTO.setIn_admin(in_admin);		
 		//MULTI END
 		
-		up_admin = (String) request.getSession().getAttribute("LOGIN_ID");
-		webtoonDTO.setUp_admin(up_admin);
-		
-		int result = webtoonDAO.modWebtoon(webtoonDTO);
+		int result = webtoonDAO.modWebtoon(webtoonMap);
 		
 		//수정 성공
 		if(result == 1){
@@ -359,7 +349,7 @@
 		if(request.getParameter("sv_name") != null) sv_name = request.getParameter("sv_name");
 		
 		
-		HashMap param = new HashMap<String, Object>();
+		HashMap<String, Object> param = new HashMap<String, Object>();
 		param.put("pa_idx", webtoon_idx);
 		param.put("sv_name", sv_name);
 		

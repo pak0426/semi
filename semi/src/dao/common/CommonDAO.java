@@ -19,6 +19,8 @@ public class CommonDAO {
 	private SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
 	private SqlSession sqlSession;
 	
+	private BaseDAO baseDAO = new BaseDAO();
+	
 	/* method 	: encryptSHA256
 	 * param	: String 
 	 * result	: String
@@ -50,25 +52,13 @@ public class CommonDAO {
 	 * result	: int
 	 * desc		: 파일 업로드 DB 적재 
 	 * */
-	public int file_upload(FileDTO fileDTO) {
+	public int file_upload(HashMap<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();
 		
 		int result = 0;
 		String target_name = "File.setFile";
 		
-		logger.debug("Target NameSpace - " + target_name);
-		
-		try {
-			result = sqlSession.insert(target_name, fileDTO);
-			
-			sqlSession.commit();
-		}catch (Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();			
-		}finally {
-			sqlSession.close();
-		}
+		result = (int) baseDAO.insert(target_name, param);
 		
 		return result;
 	}
@@ -78,28 +68,14 @@ public class CommonDAO {
 	 * result	: int
 	 * desc		: delFile
 	 * */
-	public int delFile(HashMap param) {
+	public int delFile(HashMap<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "File.delFile";
 		
-		System.out.println(param);
-		
-		logger.debug("Target NameSpace - " + target_name);
-		
 		int result = 0;
 		
-		try {
-			result = sqlSession.delete(target_name, param);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		result = (int) baseDAO.delete(target_name, param);
 		
 		return result;
 	}

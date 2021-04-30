@@ -16,6 +16,7 @@
  		<typeAlias type="dao.member.MemberDTO" alias="Member"/>
  		<typeAlias type="dao.webtoon.WebtoonDTO" alias="Webtoon"/>
  		<typeAlias type="dao.reply.ReplyDTO" alias="Reply"/>
+ 		<typeAlias alias="hashMap" type="java.util.HashMap" />
 	</typeAliases>
 	
 	<environments default="development">

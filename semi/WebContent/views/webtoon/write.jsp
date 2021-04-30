@@ -1,3 +1,5 @@
+<%@page import="java.io.BufferedReader"%>
+<%@page import="java.sql.Clob"%>
 <%@page import="java.util.*"%>
 <%@page import="dao.reply.ReplyDAO"%>
 <%@page import="dao.webtoon.WebtoonDAO"%>
@@ -15,6 +17,7 @@
 	String webtoon_idx		 = "";
 	String webtoon_title	 = "";
 	String webtoon_summary	 = "";
+	Clob clob_webtoon_content= null;
 	String webtoon_content	 = "";
 	String webtoon_author	 = "";
 	String in_admin			 = "";
@@ -23,7 +26,7 @@
 	String use_yn_str		 = "";
 	String sv_name			 = "";
 	
-	
+	String test = "";
 	
 	//null 처리
 	if(request.getParameter("webtoon_idx") != null) 	webtoon_idx = request.getParameter("webtoon_idx"); 
@@ -33,23 +36,33 @@
 	if(!webtoon_idx.equals("")){
 		act = "U";
 		
-		//DTO
-		WebtoonDTO webtoonDTO = new WebtoonDTO();
-		
+		//Map		
+		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
+		rtnMap = webtoonDAO.getWebtoon(webtoon_idx);
 		//DAO
-		webtoonDTO = webtoonDAO.getWebtoon(webtoon_idx);
 		
-		if(webtoonDTO != null){
-			if(webtoonDTO.getWebtoon_title() != null) 	webtoon_title 	 = webtoonDTO.getWebtoon_title();
-			if(webtoonDTO.getWebtoon_summary() != null) webtoon_summary	 = webtoonDTO.getWebtoon_summary();
-			if(webtoonDTO.getWebtoon_content() != null) webtoon_content	 = webtoonDTO.getWebtoon_content();
-			if(webtoonDTO.getWebtoon_author() != null) 	webtoon_author	 = webtoonDTO.getWebtoon_author();
-			if(webtoonDTO.getIn_admin() != null) 		in_admin	 	 = webtoonDTO.getIn_admin();
-			if(webtoonDTO.getThum() != null) 			thum			 = webtoonDTO.getThum();
-			if(webtoonDTO.getUse_yn() != null) 			use_yn 			 = webtoonDTO.getUse_yn();
-			if(webtoonDTO.getSv_name() != null) 		sv_name			 = webtoonDTO.getSv_name();
+		if(rtnMap != null){
+			if(rtnMap.get("WEBTOON_TITLE") != null) 	webtoon_title 	 = (String) rtnMap.get("WEBTOON_TITLE");
+			if(rtnMap.get("WEBTOON_SUMMARY") != null) 	webtoon_summary	 = (String) rtnMap.get("WEBTOON_SUMMARY");
+			if(rtnMap.get("WEBTOON_CONTENT") != null) 	clob_webtoon_content = (Clob) rtnMap.get("WEBTOON_CONTENT");
+			if(rtnMap.get("WEBTOON_AUTHOR") != null) 	webtoon_author	 = (String) rtnMap.get("WEBTOON_AUTHOR");
+			if(rtnMap.get("IN_ADMIN") != null)	 		in_admin	 	 = (String) rtnMap.get("IN_ADMIN");
+			if(rtnMap.get("THUM") != null) 				thum			 = (String) rtnMap.get("THUM");
+			if(rtnMap.get("USE_YN") != null) 			use_yn 			 = (String) rtnMap.get("USE_YN");
+			if(rtnMap.get("SV_NAME") != null) 			sv_name			 = (String) rtnMap.get("SV_NAME");
+			
+			if(clob_webtoon_content != null){
+				StringBuffer sb = new StringBuffer();
+				BufferedReader br = new BufferedReader(clob_webtoon_content.getCharacterStream());
+				String str = "";
+				while((str = br.readLine()) != null){
+					sb.append(str+"\r\n");
+					webtoon_content = sb.toString();
+				}
+			}
 		}
 	}
+	
 	
 	boolean isWriter = false;
 	System.out.println("=============in_admin : " + in_admin);
@@ -279,6 +292,9 @@
 		String reply_content = list.get(i).get("REPLY_CONTENT").toString();
 		reply_content = reply_content.replaceAll("\n", "<br/>");
 		reply_content = reply_content.replaceAll(" ", "&nbsp");
+		
+		HashMap<String, Object> row = new HashMap<String, Object>();
+		row = list.get(i);
 %>
 				
 					<div class="media-block">
@@ -287,30 +303,32 @@
 						</a>
 						<div class="media-body" id="reply_<%=list.get(i).get("REPLY_IDX") %>">
 							<div class="mar-btm">
-								<a href="javascript:void(0)" class="btn-link text-semibold media-heading box-inline" ><%= list.get(i).get("IN_ADMIN")%></a>
+								<a href="javascript:void(0)" class="btn-link text-semibold media-heading box-inline" ><%= row.get("IN_ADMIN")%></a>
 <%
-	if(list.get(i).get("IN_ADMIN").equals(session_login_id) || session_login_type.equals("admin")){
+	if(session_login_id != null && session_login_type != null){
+		if(row.get("IN_ADMIN").equals(session_login_id) || session_login_type.equals("admin")){
 %>								
 								<div style="float:right;">
-									<a class="btn-sm btn-success" id="reply_mod_<%=list.get(i).get("REPLY_IDX") %>" href="javascript:void(0)" onclick="reply.ajaxModReply(this, '<%=session_login_id %>', '<%=list.get(i).get("IN_DATE_STR") %>', '<%=reply_content %>');">수정</a>
+									<a class="btn-sm btn-success" id="reply_mod_<%=row.get("REPLY_IDX") %>" href="javascript:void(0)" onclick="reply.ajaxModReply(this, '<%=session_login_id %>', '<%=row.get("IN_DATE_STR") %>', '<%=reply_content %>');">수정</a>
 									<a class="btn-sm btn-danger" href="javascript:void(0)" onclick="reply.setReplyForm(this, 'D')">삭제</a>
 								</div>
 <%		
 	}
+		}
 %>								
 								
-								<p class="text-muted text-sm"><%=list.get(i).get("UP_DATE_STR") != null ? list.get(i).get("UP_DATE_STR") : list.get(i).get("IN_DATE_STR")%></p>
+								<p class="text-muted text-sm"><%=row.get("UP_DATE_STR") != null ? row.get("UP_DATE_STR") : row.get("IN_DATE_STR")%></p>
 							</div>
 							<div>
 								<p><%=reply_content %></p>
 							</div>
 							<div class="pad-ver">
 								<div class="btn-group">
-									<a class="btn btn-sm btn-default btn-hover-success" href="javascript:void(0)" onclick="reply.setAgree('Y','<%=list.get(i).get("REPLY_IDX") %>', '<%=session_login_id %>');">
-										<i class="fa fa-thumbs-o-up" aria-hidden="true"> <%=list.get(i).get("YES") %></i>
+									<a class="btn btn-sm btn-default btn-hover-success" href="javascript:void(0)" onclick="reply.setAgree('Y','<%=row.get("REPLY_IDX") %>', '<%=session_login_id %>');">
+										<i class="fa fa-thumbs-o-up" aria-hidden="true"> <%=row.get("YES") %></i>
 									</a>
-									<a class="btn btn-sm btn-default btn-hover-danger" href="javascript:void(0)" onclick="reply.setAgree('N','<%=list.get(i).get("REPLY_IDX") %>', '<%=session_login_id %>');">
-										<i class="fa fa-thumbs-o-down"> <%=list.get(i).get("NO") %></i>
+									<a class="btn btn-sm btn-default btn-hover-danger" href="javascript:void(0)" onclick="reply.setAgree('N','<%=row.get("REPLY_IDX") %>', '<%=session_login_id %>');">
+										<i class="fa fa-thumbs-o-down"> <%=row.get("NO") %></i>
 									</a>
 								</div>
 								<a class="btn btn-sm btn-default btn-hover-primary" href="javascript:void(0)" >Comment</a>

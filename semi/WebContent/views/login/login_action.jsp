@@ -1,3 +1,4 @@
+<%@page import="java.util.*"%>
 <%@page import="dao.member.MemberDTO"%>
 <%@page import="dao.common.CommonDAO"%>
 <%@page import="dao.member.MemberDAO"%>
@@ -29,6 +30,8 @@ public void setReturn(String isOk, String msg, HttpServletResponse response) {
 
 	//DTO
 	MemberDTO memberDTO = new MemberDTO();
+	HashMap<String, Object> memberMap = new HashMap<String, Object>();
+			
 	
 	//param check
 	if(member_id == null || member_pw == null){
@@ -43,6 +46,9 @@ public void setReturn(String isOk, String msg, HttpServletResponse response) {
 		memberDTO.setMember_id(member_id);
 		memberDTO.setMember_pw(member_pw);
 		
+		memberMap.put("member_id", member_id);
+		memberMap.put("member_pw", member_pw);
+		
 		String member_type = "";
 		member_type = memberDAO.getMemberType(member_id);
 		
@@ -53,7 +59,7 @@ public void setReturn(String isOk, String msg, HttpServletResponse response) {
 		}
 		
 		
-		int chkID = memberDAO.chkMember(memberDTO);
+		int chkID = memberDAO.chkMember(memberMap);
 		
 		if(chkID == 0){
 			type = "ID_ERROR";

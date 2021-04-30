@@ -6,8 +6,8 @@ import java.util.*;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
-import org.apache.log4j.chainsaw.Main;
 
+import dao.common.BaseDAO;
 import dao.mybatis.SqlSessionManager;
 
 public class MemberDAO {
@@ -15,6 +15,8 @@ public class MemberDAO {
 	
 	private SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
 	private SqlSession sqlSession;
+	
+	private BaseDAO baseDAO = new BaseDAO();
 	
 	/* method 	: setMember
 	 * param	: MemberDTO 
@@ -50,7 +52,7 @@ public class MemberDAO {
 	 * result	: int
 	 * desc		: DB에 아이디가 존재하는지 확인
 	 * */
-	public int chkMember(MemberDTO memberDTO) {
+	public int chkMember(HashMap<String, Object> param) {
 		SqlSession sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "Member.chkMember";
@@ -59,17 +61,8 @@ public class MemberDAO {
 		
 		int result = 0;
 		
-		try {
-			result = sqlSession.selectOne(target_name, memberDTO);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		result = (int) baseDAO.selectOne(target_name, param);
+		
 		return result;
 	}
 	

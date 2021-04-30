@@ -43,7 +43,7 @@
 	 	</choose>
 	 </sql>
 
-	<select id="getWebtoonList" resultMap="WebtoonMap">
+	<select id="getWebtoonList" resultType="HashMap">
 	SELECT
 		A.*
 	FROM(
@@ -110,7 +110,7 @@
 	SELECT WEBTOON_IDX_SEQ.NEXTVAL FROM DUAL
 	</select>
 	
-	<select id="getWebtoon" parameterType="String" resultMap="WebtoonMap">
+	<select id="getWebtoon" parameterType="String" resultType="HashMap">
 	SELECT 
 		WEBTOON.*
     	,FILE_DB.SV_NAME
@@ -120,7 +120,7 @@
 	WHERE WEBTOON_IDX = #{webtoon_idx}
 	</select>
 	
-	<update id="modWebtoon" parameterType="hashMap">
+	<update id="modWebtoon">
 	UPDATE WEBTOON SET
 	 WEBTOON_TITLE 	 = #{webtoon_title}
 	,WEBTOON_CONTENT = #{webtoon_content}

@@ -7,42 +7,34 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+
+import dao.common.BaseDAO;
 import dao.mybatis.SqlSessionManager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 
 public class WebtoonDAO {
+	private static final Logger logger = Logger.getLogger(WebtoonDAO.class);
+	
 	private SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
 	private SqlSession sqlSession;
 	
-	private final Logger logger = LoggerFactory.getLogger(WebtoonDAO.class);
+	private BaseDAO baseDAO = new BaseDAO();
 	
 	/* method 	: getWebtoonList
 	 * param	: MemberDTO 
 	 * result	: List
 	 * desc		: 웹툰 리스트 출력 
 	 * */
-	public List<WebtoonDTO> getWebtoonList(WebtoonDTO webtoonDTO) {
+	public List<HashMap<String, Object>> getWebtoonList(HashMap<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();		
+		
 		String target_name = "Webtoon.getWebtoonList";
 		
-		logger.debug("Target NameSpace - " + target_name);
+		List<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
 		
-		List<WebtoonDTO> list = new ArrayList<WebtoonDTO>();
-		
-		try {
-			list = sqlSession.selectList(target_name, webtoonDTO);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		list = (List<HashMap<String, Object>>) baseDAO.selectList(target_name, param);
 		
 		return list;
 	}
@@ -52,57 +44,14 @@ public class WebtoonDAO {
 	 * result	: int
 	 * desc		: get totalCount
 	 * */
-	public int getTotalCount(WebtoonDTO webtoonDTO) {
+	public int getTotalCount(HashMap<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "Webtoon.getTotalCount";
-		logger.debug("Target NameSpace - " + target_name);
-		
-		HashMap<String, String> param = new HashMap<String, String>();
 		
 		int result = 0;
 		
-		try {
-			result = sqlSession.selectOne(target_name, webtoonDTO);
-			  
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
-		
-		return result;
-	}
-	
-	/* method 	: setWebtoon
-	 * param	: MemberDTO 
-	 * result	: int
-	 * desc		: 회원 등록 
-	 * */
-	public int setWebtoon(WebtoonDTO webtoonDTO) {
-		sqlSession = sqlSessionFactory.openSession();
-		
-		String target_name = "Webtoon.setWebtoon";
-		
-		logger.debug("Target NameSpace - " + target_name);
-		
-		int result = 0;
-		
-		try {
-			result = sqlSession.insert(target_name, webtoonDTO);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
-		
+		result = (int) baseDAO.selectOne(target_name, param);
 		
 		return result;
 	}
@@ -117,59 +66,53 @@ public class WebtoonDAO {
 		
 		String target_name = "Webtoon.getNextVal";
 		
-		logger.debug("Target NameSpace - " + target_name);
-		
 		int result = 0;
 		
-		try {
-			result = sqlSession.selectOne(target_name);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		result = (int) baseDAO.selectOne(target_name, null);
 		
 		return result;
 	}
+	
+	/* method 	: setWebtoon
+	 * param	: MemberDTO 
+	 * result	: int
+	 * desc		: 회원 등록 
+	 * */
+//	public int setWebtoon(WebtoonDTO webtoonDTO) {
+	public int setWebtoon(HashMap<String, Object> param) {
+		sqlSession = sqlSessionFactory.openSession();
+		
+		String target_name = "Webtoon.setWebtoon";
+		
+		
+		int result = 0;
+		
+		result = (int) baseDAO.insert(target_name, param);
+		
+		return result;
+	}
+	
 	
 	/* method 	: getWebtoon
 	 * param	: MemberDTO 
 	 * result	: WebtoonDTO
 	 * desc		: 웹툰 조회
 	 * */
-	public WebtoonDTO getWebtoon(String webtoon_idx) {
+	public HashMap<String, Object> getWebtoon(String webtoon_idx) {
 		sqlSession = sqlSessionFactory.openSession();
 		
 		//DTO
 		WebtoonDTO webtoonDTO = new WebtoonDTO();
 		
 		//Map
-		HashMap<String, String> param = new HashMap<String, String>();
-		
-		param.put("webtoon_idx", webtoon_idx);
+		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 		
 		String target_name = "Webtoon.getWebtoon";
 		
-		logger.debug("Target NameSpace - " + target_name);
+		rtnMap = (HashMap<String, Object>) baseDAO.selectOne(target_name, webtoon_idx);
 		
-		try {
-			webtoonDTO = new WebtoonDTO();
-			webtoonDTO = sqlSession.selectOne(target_name, webtoon_idx);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
 		
-		return webtoonDTO;
+		return rtnMap;
 	}
 	
 	/* method 	: modWebtoon
@@ -177,35 +120,14 @@ public class WebtoonDAO {
 	 * result	: int
 	 * desc		: max idx
 	 * */
-	public int modWebtoon(WebtoonDTO webtoonDTO) {
+	public int modWebtoon(HashMap<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "Webtoon.modWebtoon";
 		
-		HashMap<String, String> param = new HashMap<String, String>();
-		
-		param.put("webtoon_title", webtoonDTO.getWebtoon_title());
-		param.put("webtoon_content", webtoonDTO.getWebtoon_content());
-		param.put("webtoon_summary", webtoonDTO.getWebtoon_summary());
-		param.put("webtoon_author", webtoonDTO.getWebtoon_author());
-		param.put("thum", webtoonDTO.getThum());
-		param.put("up_admin", webtoonDTO.getUp_admin());
-		param.put("use_yn", webtoonDTO.getUse_yn());
-		param.put("webtoon_idx", webtoonDTO.getWebtoon_idx());
-		
 		int result = 0;
 		
-		try {
-			result = sqlSession.update(target_name, param);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		result = (int) baseDAO.update(target_name, param);
 		
 		return result;
 	}
@@ -220,7 +142,6 @@ public class WebtoonDAO {
 		
 		String target_name = "Webtoon.delWebtoon";
 		
-		logger.debug("Target NameSpace - " + target_name);
 		
 		//map
 		HashMap<String, String> param = new HashMap<String, String>();
@@ -228,17 +149,7 @@ public class WebtoonDAO {
 		
 		int result = 0;
 		
-		try {
-			result = sqlSession.delete(target_name, param);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		result = (int) baseDAO.delete(target_name, param);
 		
 		return result;
 	}
@@ -255,21 +166,9 @@ public class WebtoonDAO {
 		
 		String target_name = "Webtoon.delThum";
 		
-		logger.debug("Target NameSpace - " + target_name);
-		
 		int result = 0;
 		
-		try {
-			result = sqlSession.update(target_name, webtoon_idx);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		result = (int) baseDAO.update(target_name, webtoon_idx);
 		
 		return result;
 	}

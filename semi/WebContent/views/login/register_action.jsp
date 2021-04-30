@@ -1,3 +1,4 @@
+<%@page import="java.util.*"%>
 <%@page import="dao.common.CommonDAO"%>
 <%@page import="dao.member.MemberDTO"%>
 <%@page import="dao.member.MemberDAO"%>
@@ -37,11 +38,18 @@
 	
 	//DTO
 	MemberDTO memberDTO = new MemberDTO();
+	HashMap<String, Object> memberMap = new HashMap<String, Object>();
+	
 	
 	memberDTO.setMember_type(member_type);
 	memberDTO.setMember_name(member_name);
 	memberDTO.setMember_id(member_id);
 	memberDTO.setMember_email(member_email);
+	
+	memberMap.put("member_type", member_type);
+	memberMap.put("member_name", member_name);
+	memberMap.put("member_id", member_id);
+	memberMap.put("member_email", member_email);
 	
 	//비밀번호 암호화
 	CommonDAO commonDAO = new CommonDAO();
@@ -51,12 +59,13 @@
 	}
 	
 	memberDTO.setMember_pw(member_pw);
+	memberMap.put("member_pw", member_pw);
 	
 	//DAO
 	MemberDAO memberDAO = new MemberDAO();
 	
 	int result = 0;	
-	int chkMember = memberDAO.chkMember(memberDTO);
+	int chkMember = memberDAO.chkMember(memberMap);
 	
 	//ID 중복체크
 	if(member_name.equals("") && !member_id.equals("")){
@@ -79,14 +88,17 @@
 			isOk = "N";
 			msg  = "ID가 중복되었습니다.";
 			response.sendRedirect("register.jsp?type=" + type + "&isOk=" + isOk);
-	// 		setReturn(isOk, msg, response);
 		}else{
 			//등록 성공시
-			memberDAO.setMember(memberDTO);
-			isOk = "Y";
-			msg = "등록에 성공하였습니다.";
-	// 		setReturn(isOk, msg, response);
-			response.sendRedirect("login.jsp?isOk=" + isOk);
+			int set_result = 0;
+			set_result = memberDAO.setMember(memberDTO);
+			if(set_result == 1){
+				isOk = "Y";
+				msg = "등록에 성공하였습니다.";
+				response.sendRedirect("login.jsp?isOk=" + isOk);
+			}else{
+				
+			}
 		}
 	}
 	

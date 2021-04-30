@@ -12,7 +12,7 @@ public class PagingUtil {
 	int pageNum = 0;
 	int range = 10;
 	
-	public HashMap<String, Integer> paging(int pg, int pp, int totalCount){
+	public HashMap<String, Object> paging(int pg, int pp, int totalCount){
 		//pg = 1 pp = 10  startRow = (pg-1) * pp +1 endRow = pg * pp
 		startRow = (pg-1) * pp + 1;
 		endRow = pp * pg;
@@ -20,7 +20,7 @@ public class PagingUtil {
 		endPage = startPage + range - 1;
 		pageNum = totalCount / pp + (totalCount % pp == 0 ? 0 : 1);
 		
-		HashMap<String, Integer> rtnMap = new HashMap<String, Integer>();
+		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
 		
 		rtnMap.put("startRow", startRow);
 		rtnMap.put("endRow", endRow);

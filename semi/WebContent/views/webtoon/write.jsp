@@ -1,9 +1,7 @@
+<%@page import="dao.common.BaseDAO"%>
 <%@page import="java.io.BufferedReader"%>
 <%@page import="java.sql.Clob"%>
 <%@page import="java.util.*"%>
-<%@page import="dao.reply.ReplyDAO"%>
-<%@page import="dao.webtoon.WebtoonDAO"%>
-<%@page import="dao.webtoon.WebtoonDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/views/inc/common.jsp"%>
 <%
@@ -32,13 +30,13 @@
 	if(request.getParameter("webtoon_idx") != null) 	webtoon_idx = request.getParameter("webtoon_idx"); 
 	
 	//DAO
-	WebtoonDAO webtoonDAO = new WebtoonDAO();
+	BaseDAO baseDAO = new BaseDAO();
 	if(!webtoon_idx.equals("")){
 		act = "U";
 		
 		//Map		
-		HashMap<String, Object> rtnMap = new HashMap<String, Object>();
-		rtnMap = webtoonDAO.getWebtoon(webtoon_idx);
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		rtnMap = (Map<String, Object>) baseDAO.selectOne("Webtoon.getWebtoon", webtoon_idx);
 		//DAO
 		
 		if(rtnMap != null){
@@ -79,11 +77,10 @@
 	if(request.getParameter("type") != null)  type = request.getParameter("type");
 	
 	//====================REPLY
-	ReplyDAO replyDAO = new ReplyDAO();
-	HashMap<String, Object> listParam = new HashMap<String, Object>();
+	Map<String, Object> listParam = new HashMap<String, Object>();
 	listParam.put("pa_idx", webtoon_idx);		
 	
-	List<HashMap<String, Object>> list = replyDAO.getReplyList(listParam);			
+	List<Map<String, Object>> list = baseDAO.selectList("Reply.getReplyList", listParam);			
 %>
 <!DOCTYPE html>
 <html>
@@ -99,8 +96,14 @@
 	let type = "<%=type %>";
 	let isWriter = "<%=isWriter%>";
 	let login_type = "<%=session_login_type %>"
+	let login_status = "<%=session_login_status %>"
 	
-	$(document).ready(function(){
+	$(document).ready(function(){		
+		if(login_status == ""){
+			alert("로그인을 해주세요. 불가능한 접근입니다.");				
+			location.href = "./webtoon.jsp";
+		}
+		
 		if(isWriter == "false" && login_type != "admin" && webtoon_idx != ""){
 			ChkWriter();
 		}
@@ -204,9 +207,9 @@
 			<div class="col-lg-12">
 				<h2 class="h3 mb-4 page-title">write</h2>
 				<div class="my-4">
-					<form enctype="multipart/form-data" class="form-horizontal" id="writeForm" name="writeForm" action="./write_action.jsp?act=<%=act %>" method="post">
+<%-- 					<form enctype="multipart/form-data" class="form-horizontal" id="writeForm" name="writeForm" action="./write_action.jsp?act=<%=act %>" method="post"> --%>
+					<form class="form-horizontal" id="writeForm" name="writeForm" action="./write_action2.jsp?act=<%=act %>" method="post">
 						<input type="hidden" id="webtoon_idx" name="webtoon_idx" value="<%=webtoon_idx %>" />
-						<input type="hidden" id="session_login_id" name="session_login_id" value="<%=session_login_id %>" />
 						<hr class="my-4" />
 						<div class="form-group">
 							<label for="webtoon_title">제목</label> <input type="text" class="form-control" id="webtoon_title" name="webtoon_title" style="height: 40px" value="<%=webtoon_title %>" />
@@ -223,32 +226,33 @@
 							<label for="firstname">작성자</label> <input type="text" class="form-control" id="webtoon_author" name="webtoon_author" style="height: 40px" value="<%=webtoon_author%>" />
 						</div>
 						<div class="form-group">
-							<label for="firstname">썸네일 이미지</label><br />
+<!-- 							<label for="firstname">썸네일 이미지</label><br /> -->
 <%
 	if(!thum.equals("")){
 %>
-							<div id="div_thum">
-								<img src="/upload/<%=thum %>" width=600px> <label class="d-block mt-2" for="secondname">현재 썸네일 : <%=thum %></label>
-								<button type="button" id="del_thum_btn" class="btn btn-sm btn-danger" onclick="delThum();">삭제하기</button>
-								<br />
-								<br />
-							</div>
+<!-- 							<div id="div_thum"> -->
+<%-- 								<img src="/upload/<%=thum %>" width=600px> <label class="d-block mt-2" for="secondname">현재 썸네일 : <%=thum %></label> --%>
+<!-- 								<button type="button" id="del_thum_btn" class="btn btn-sm btn-danger" onclick="delThum();">삭제하기</button> -->
+<!-- 								<br /> -->
+<!-- 								<br /> -->
+<!-- 							</div> -->
 <%
 	}
 %>
 
-							<div id="div_thum_sel">
-								<div class="spinner-border text-primary" role="status">
-									<span class="visually-hidden">* 이미지 권장 사이즈 : 600 * 400</span>
-								</div>
-								<br /> <input class="form-control" type="file" id="thum" name="thum">
-							</div>
+<!-- 							<div id="div_thum_sel"> -->
+<!-- 								<div class="spinner-border text-primary" role="status"> -->
+<!-- 									<span class="visually-hidden">* 이미지 권장 사이즈 : 600 * 400</span> -->
+<!-- 								</div> -->
+<!-- 								<br /> <input class="form-control" type="file" id="thum" name="thum"> -->
+<!-- 							</div> -->
 						</div>
 						<div class="form-group" id="div_use">
+						<label for="firstname">사용 여부</label> 
 <%	
 		if(webtoon_idx.equals("")){
 %>
-							<label for="firstname">사용 여부</label> <label><input type="radio" id="use_y" name="use_yn" value="Y" checked />&nbsp;사용</label>&nbsp;&nbsp;&nbsp; <label><input type="radio" id="use_n" name="use_yn" value="N" />&nbsp;미사용</label>
+							<label><input type="radio" id="use_y" name="use_yn" value="Y" checked />&nbsp;사용</label>&nbsp;&nbsp;&nbsp; <label><input type="radio" id="use_n" name="use_yn" value="N" />&nbsp;미사용</label>
 <%
 		}else{
 %>
@@ -293,7 +297,7 @@
 		reply_content = reply_content.replaceAll("\n", "<br/>");
 		reply_content = reply_content.replaceAll(" ", "&nbsp");
 		
-		HashMap<String, Object> row = new HashMap<String, Object>();
+		Map<String, Object> row = new HashMap<String, Object>();
 		row = list.get(i);
 %>
 				

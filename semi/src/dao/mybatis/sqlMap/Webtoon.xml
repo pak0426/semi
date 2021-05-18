@@ -146,10 +146,4 @@
 	SET THUM = NULL
 	WHERE WEBTOON_IDX = #{webtoon_idx}
 	</delete>
-	
-	
-	
-	
-	
-	
 </mapper>

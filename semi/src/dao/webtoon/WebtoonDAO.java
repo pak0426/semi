@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -27,14 +28,14 @@ public class WebtoonDAO {
 	 * result	: List
 	 * desc		: 웹툰 리스트 출력 
 	 * */
-	public List<HashMap<String, Object>> getWebtoonList(HashMap<String, Object> param) {
+	public List<Map<String, Object>> getWebtoonList(HashMap<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();		
 		
 		String target_name = "Webtoon.getWebtoonList";
 		
-		List<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		
-		list = (List<HashMap<String, Object>>) baseDAO.selectList(target_name, param);
+		list = (List<Map<String, Object>>) baseDAO.selectList(target_name, param);
 		
 		return list;
 	}
@@ -78,7 +79,6 @@ public class WebtoonDAO {
 	 * result	: int
 	 * desc		: 회원 등록 
 	 * */
-//	public int setWebtoon(WebtoonDTO webtoonDTO) {
 	public int setWebtoon(HashMap<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();
 		
@@ -144,7 +144,7 @@ public class WebtoonDAO {
 		
 		
 		//map
-		HashMap<String, String> param = new HashMap<String, String>();
+		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("webtoon_idx", webtoon_idx);
 		
 		int result = 0;

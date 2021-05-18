@@ -2,14 +2,10 @@
 <%@ page  contentType="text/html;charset=utf-8"  pageEncoding = "utf-8" %>
 <%@ page import="dao.member.MemberDAO"%>
 <%@ include file="/views/inc/common.jsp"%>
-<%-- <%@ include file="/views/inc/head.jsp"%> --%>
 
 <%
-	MemberDAO memberDAO = new MemberDAO();
-	
 	String type = request.getParameter("type");
 	String isOk = request.getParameter("isOk");
-	
 %>
 <!DOCTYPE html>
 <html>
@@ -32,14 +28,14 @@
 			alert("가입 유형을 선택해주세요.");
 			return false;
 		}
-		if($("#name").val() == ""){
-			alert("이름을 입력해주세요.");
-			$("#name").focus();
-			return false;
-		}
 		if($("#id").val() == ""){
 			alert("ID를 입력해주세요.");
 			$("#id").focus();
+			return false;
+		}
+		if($("#name").val() == ""){
+			alert("이름을 입력해주세요.");
+			$("#name").focus();
 			return false;
 		}
 		if($("#checkId").val() == "N"){
@@ -133,7 +129,7 @@
 					alert(data.msg);
 					
 					if(data.isOk == "Y"){
-						$("#email").focus();
+						$("#name").focus();
 						$("#checkId").val("Y");
 						$("#checkId_btn").remove();
 					}else{
@@ -211,16 +207,16 @@ body{
 										</div>
 										<div class="form-check">
 										</div>
-										<div class="form-group">
-											<label>이름</label>
-											<input class="form-control form-control-lg" type="text" id="name" name="name" placeholder="Enter your name">
-										</div>
 										<div class="form-group" >
 											<label class="d-block">ID</label>
 											<input class="form-control form-control-lg d-inline-block w-75" type="text" id="id" name="id" placeholder="Enter your id">
 											<button class="btn btn-primary btn-lg align-top" type="button" id="checkId_btn" name="checkId_btn" value="" onclick="chkId();">중복확인</button>
 											<p style="margin-left:5px">(5~20자의 영문 소문자, 숫자만 사용 가능합니다.)</p>
 											<input type="hidden" id="checkId" name="checkId" value="N">
+										</div>
+										<div class="form-group">
+											<label>이름</label>
+											<input class="form-control form-control-lg" type="text" id="name" name="name" placeholder="Enter your name">
 										</div>
 										<div class="form-group">
 											<label>Email</label>

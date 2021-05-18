@@ -23,7 +23,7 @@ public class MemberDAO {
 	 * result	: int
 	 * desc		: 회원 등록 
 	 * */
-	public int setMember(MemberDTO memberDTO) {		
+	public int setMember(HashMap<String, Object> param) {		
 		SqlSession sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "Member.setMember";
@@ -32,17 +32,7 @@ public class MemberDAO {
 		
 		int result = 0;
 		
-		try {
-			result = sqlSession.insert(target_name, memberDTO);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		result = (int) baseDAO.insert(target_name, param);
 		
 		return result;
 	}
@@ -53,8 +43,6 @@ public class MemberDAO {
 	 * desc		: DB에 아이디가 존재하는지 확인
 	 * */
 	public int chkMember(HashMap<String, Object> param) {
-		SqlSession sqlSession = sqlSessionFactory.openSession();
-		
 		String target_name = "Member.chkMember";
 		
 		logger.debug("■ Target NameSpace : " + target_name);
@@ -71,27 +59,15 @@ public class MemberDAO {
 	 * result	: int
 	 * desc		: PW 중복 체크
 	 * */
-	public int chkPW(MemberDTO memberDTO) {
-		int result = 0;
-		
-		SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
-		SqlSession sqlSession = sqlSessionFactory.openSession();
+	public int chkPW(HashMap<String, Object> param) {
 		
 		String target_name = "Member.chkPW";
 		
 		logger.debug("■ Target NameSpace : " + target_name);
 		
-		try {
-			result = sqlSession.selectOne(target_name, memberDTO);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		int result = 0;
+		
+		result = (int) baseDAO.selectOne(target_name, param);
 		
 		return result;
 	}
@@ -103,27 +79,14 @@ public class MemberDAO {
 	 * */
 	
 	public String getMemberType(String member_id) {
-		String type = "";
-		
-		SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSession();
-		SqlSession sqlSession = sqlSessionFactory.openSession();
 		
 		String target_name = "Member.getMemberType";
 		
 		logger.debug("■ Target NameSpace : " + target_name);
 		
-		try {
-			type = sqlSession.selectOne(target_name, member_id);
-			
-			sqlSession.commit();			
-		}catch(Exception e) {
-			sqlSession.rollback();
-			
-			e.printStackTrace();
-		}finally {
-			sqlSession.close();
-		}
+		String type = "";
 		
+		type = (String) baseDAO.selectOne(target_name, member_id);
 		
 		return type;
 			

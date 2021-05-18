@@ -1,8 +1,8 @@
 package dao.common;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -22,15 +22,15 @@ public class BaseDAO {
 	 * result	: List
 	 * desc		:  
 	 * */
-	public Object selectList(String target_name, HashMap<String, Object> param) {
+	public List<Map<String, Object>> selectList(String target_name, Map<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();		
 		
 		logger.debug("Target NameSpace - " + target_name);
 		
-		Object obj = null;
+		List<Map<String, Object>> rtnList = null;
 		
 		try {
-			obj = sqlSession.selectList(target_name, param);
+			rtnList = sqlSession.selectList(target_name, param);
 			
 			sqlSession.commit();			
 		}catch(Exception e) {
@@ -41,7 +41,7 @@ public class BaseDAO {
 			sqlSession.close();
 		}
 		
-		return obj;
+		return rtnList;
 	}
 	
 	/* method 	: selectOne
@@ -76,7 +76,7 @@ public class BaseDAO {
 	 * result	: int
 	 * desc		: 파일 업로드 DB 적재 
 	 * */
-	public Object insert(String target_name, HashMap<String, Object> param) {
+	public Object insert(String target_name, Map<String, Object> param) {
 		sqlSession = sqlSessionFactory.openSession();
 		
 		Object obj = null;
@@ -103,13 +103,13 @@ public class BaseDAO {
 	 * result	: int
 	 * desc		: max idx
 	 * */
-	public Object update(String target_name, Object param_obj) {
+	public int update(String target_name, Object param) {
 		sqlSession = sqlSessionFactory.openSession();
 		
-		Object obj = null;
+		int result = 0;
 		
 		try {
-			obj = sqlSession.update(target_name, param_obj);
+			result = sqlSession.update(target_name, param);
 			
 			sqlSession.commit();			
 		}catch(Exception e) {
@@ -120,7 +120,7 @@ public class BaseDAO {
 			sqlSession.close();
 		}
 		
-		return obj;
+		return result;
 	}
 	
 	/* method 	: delete
@@ -128,16 +128,15 @@ public class BaseDAO {
 	 * result	: int
 	 * desc		: 
 	 * */
-	public Object delete(String target_name, Object param_obj) {
+	public int delete(String target_name, Object param) {
 		sqlSession = sqlSessionFactory.openSession();
 		
 		logger.debug("Target NameSpace - " + target_name);
 		
-		//map
-		Object obj = null;
+		int result = 0;
 		
 		try {
-			obj = sqlSession.delete(target_name, param_obj);
+			result = sqlSession.delete(target_name, param);
 			
 			sqlSession.commit();			
 		}catch(Exception e) {
@@ -148,6 +147,6 @@ public class BaseDAO {
 			sqlSession.close();
 		}
 		
-		return obj;
+		return result;
 	}
 }

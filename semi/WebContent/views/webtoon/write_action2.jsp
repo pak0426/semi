@@ -3,8 +3,7 @@
 <%@page import="dao.common.CommonDAO"%>
 <%@page import="java.io.File"%>
 <%@page import="java.util.*"%>
-<%@page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"%>
-<%@page import="com.oreilly.servlet.MultipartRequest"%>
+<%@page import="dao.webtoon.WebtoonDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%!
 	public String getIp(HttpServletRequest request) {
@@ -22,7 +21,6 @@
 	request.setCharacterEncoding("UTF-8");	
 	
 	//파일 업로드를 위한 변수 선언
-	MultipartRequest multi = null;
 	
 	String file_name = "";
 	String ori_name = "";
@@ -70,55 +68,13 @@
 	
 	//등록시***********************************************************************************************************************************************
 	if(act.equals("I")){
-		//MULTI START
-		multi = new MultipartRequest(request, savePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
-		
-		//FILE process
-		Enumeration files = multi.getFileNames();
-		
-		out.println("files.hasMoreElements() :    " + files.hasMoreElements());
-		out.println("<br/>");
-		out.println("multi.getFilesystemName(thum) :    " + multi.getFilesystemName("thum"));
-		out.println("<br/>");
-		
-		
-		boolean check = false;
-		if(multi.getFilesystemName("thum") != null) check = true;
-		
-		if(check){
-			while(files.hasMoreElements()){
-				//업로드 한 파일
-				String file = files.nextElement().toString();
-				//업로드 한 파일의 진짜 이름
-				ori_name = multi.getOriginalFileName(file);
-				//업로드 한 파일의 renamepoliy로 unique하게 바꾼 이름을 가져온다.
-				file_name = multi.getFilesystemName(file);
-				//파일 타입
-				file_type = multi.getContentType(file);
-				//파일 크기 구하기
-				File getFile = multi.getFile(file);
-				file_size = file.length();
-			}
-		}
-			
-		
-		 out.println("<br/>");
-		 out.println("ori_name : " + ori_name);
-		 out.println("<br/>");
-		 out.println("file_name : " + file_name);
-		 out.println("<br/>");
-		 out.println("file_type : " + file_type);
-		 out.println("<br/>");
-		 out.println("file_size : " + file_size);
-		
-		
 		//webtoon info
-		if(multi.getParameter("webtoon_idx") != null) 		webtoon_idx = multi.getParameter("webtoon_idx"); 
-		if(multi.getParameter("webtoon_title") != null) 	webtoon_title = multi.getParameter("webtoon_title"); 
-		if(multi.getParameter("webtoon_summary") != null) 	webtoon_summary = multi.getParameter("webtoon_summary");
-		if(multi.getParameter("webtoon_content") != null) 	webtoon_content = multi.getParameter("webtoon_content");
-		if(multi.getParameter("webtoon_author") != null) 	webtoon_author = multi.getParameter("webtoon_author");
-		if(multi.getParameter("use_yn") != null) 			use_yn = multi.getParameter("use_yn");
+		if(request.getParameter("webtoon_idx") != null) 		webtoon_idx = request.getParameter("webtoon_idx"); 
+		if(request.getParameter("webtoon_title") != null) 	webtoon_title = request.getParameter("webtoon_title"); 
+		if(request.getParameter("webtoon_summary") != null) 	webtoon_summary = request.getParameter("webtoon_summary");
+		if(request.getParameter("webtoon_content") != null) 	webtoon_content = request.getParameter("webtoon_content");
+		if(request.getParameter("webtoon_author") != null) 	webtoon_author = request.getParameter("webtoon_author");
+		if(request.getParameter("use_yn") != null) 			use_yn = request.getParameter("use_yn");
 		//MULTI END
 		
 		 //VAL CHECK
@@ -154,22 +110,6 @@
 		webtoonMap.put("thum", thum);
 		webtoonMap.put("in_admin", in_admin);
 		
-		int file_result = 0;
-		//FILE DTO CHECK
-		if(check){
-			webtoonMap.put("thum", ori_name);
-			
-			fileMap.put("file_type", file_type);
-			fileMap.put("pa_idx", Integer.toString(nextVal));
-			fileMap.put("ori_name", ori_name);
-			fileMap.put("sv_name", file_name);
-			fileMap.put("in_user", in_admin);
-			fileMap.put("in_ip", getIp(request));
-			
-			//파일 업로드
-			file_result = (int) baseDAO.insert("File.setFile", fileMap);
-		}
-		
 		//등록
 		int result = (int) baseDAO.insert("Webtoon.setWebtoon", webtoonMap);
 		
@@ -178,7 +118,6 @@
 		
 				
 		out.println("<br/>");
-		out.println("file_result : " + file_result);
 		 
 		//등록이 되었을때
 		if(result == 1){
@@ -194,57 +133,14 @@
  	}
 	//수정시	***********************************************************************************************************************************************
 	else if(act.equals("U")){
-		//MULTI START
-		multi = new MultipartRequest(request, savePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
-		
-		System.out.println("===multi.getFilesystemName(thum) : " + multi.getFilesystemName("thum"));
-		
-		boolean check = false;
-		if(multi.getFilesystemName("thum") != null) check = true;
-		
-		//파라미터를 위한 변수들 생성
-		if(multi.getParameter("webtoon_idx") != null) 		webtoon_idx = multi.getParameter("webtoon_idx");
-		Map<String, Object> rtnMap = new HashMap<String, Object>();
-		
-		rtnMap = (Map<String, Object>) baseDAO.selectOne("Webtoon.getWebtoon", webtoon_idx);
-		
-		//File PROCESS
-		Enumeration files = multi.getFileNames();
-		
-		if(check){
-			while(files.hasMoreElements()){
-				//업로드 한 파일
-				String file = files.nextElement().toString();
-				//업로드 한 파일의 진짜 이름
-				ori_name = multi.getOriginalFileName(file);
-				//업로드 한 파일의 renamepoliy로 unique하게 바꾼 이름을 가져온다.
-				file_name = multi.getFilesystemName(file);
-				//파일 타입
-				file_type = multi.getContentType(file);
-				//파일 크기 구하기
-				File getFile = multi.getFile(file);
-				file_size = file.length();
-				
-				Map<String, Object> param = new HashMap<String, Object>();
-				param.put("pa_idx", webtoon_idx);
-				param.put("sv_name", rtnMap.get("SV_NAME"));
-				
-				//기존에 있던 썸네일 데이터 삭제
-				baseDAO.delete("File.delFile", param);
-			}
-		}
-		
 		//webtoon info
-		if(multi.getParameter("webtoon_idx") != null) 		webtoon_idx = multi.getParameter("webtoon_idx");
-		if(multi.getParameter("webtoon_title") != null) 	webtoon_title = multi.getParameter("webtoon_title"); 
-		if(multi.getParameter("webtoon_summary") != null) 	webtoon_summary = multi.getParameter("webtoon_summary");
-		if(multi.getParameter("webtoon_content") != null) 	webtoon_content = multi.getParameter("webtoon_content");
-		if(multi.getParameter("webtoon_author") != null) 	webtoon_author = multi.getParameter("webtoon_author");
-		if(multi.getParameter("thum") != null) 				thum = multi.getParameter("thum");
-		if(multi.getParameter("use_yn") != null) 			use_yn = multi.getParameter("use_yn");
-		
-		System.out.println("===thum : " + thum);
-		System.out.println("===check : " + check);
+		if(request.getParameter("webtoon_idx") != null) 		webtoon_idx = request.getParameter("webtoon_idx");
+		if(request.getParameter("webtoon_title") != null) 	webtoon_title = request.getParameter("webtoon_title"); 
+		if(request.getParameter("webtoon_summary") != null) 	webtoon_summary = request.getParameter("webtoon_summary");
+		if(request.getParameter("webtoon_content") != null) 	webtoon_content = request.getParameter("webtoon_content");
+		if(request.getParameter("webtoon_author") != null) 	webtoon_author = request.getParameter("webtoon_author");
+		if(request.getParameter("thum") != null) 				thum = request.getParameter("thum");
+		if(request.getParameter("use_yn") != null) 			use_yn = request.getParameter("use_yn");
 		
 		//VAL CHECK
 		 if(webtoon_title.equals("")
@@ -269,26 +165,6 @@
 		
 		in_admin = (String) request.getSession().getAttribute("LOGIN_ID");
 		webtoonMap.put("up_admin", in_admin);
-		
-		//FILE DTO CHECK
-		int file_result = 0;
-		if(check){
-			webtoonMap.put("thum", ori_name);
-			
-			fileMap.put("file_type", file_type);
-			fileMap.put("pa_idx", webtoon_idx);
-			fileMap.put("ori_name", ori_name);
-			fileMap.put("sv_name", file_name);
-			fileMap.put("in_user", in_admin);
-			fileMap.put("in_ip", getIp(request));
-			
-			//파일 업로드
-			file_result = (int) baseDAO.insert("File.setFile", fileMap);
-		}
-		out.println("<br/>");
-		out.println("file_result : " + file_result);
-		//FILE DTO CHECK
-		//MULTI END
 		
 		int result = (int) baseDAO.update("Webtoon.modWebtoon", webtoonMap);
 		

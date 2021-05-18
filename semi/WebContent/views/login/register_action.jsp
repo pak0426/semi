@@ -1,3 +1,4 @@
+<%@page import="dao.common.BaseDAO"%>
 <%@page import="java.util.*"%>
 <%@page import="dao.common.CommonDAO"%>
 <%@page import="dao.member.MemberDTO"%>
@@ -37,14 +38,8 @@
 	if(request.getParameter("password") != null) member_pw = request.getParameter("password");
 	
 	//DTO
-	MemberDTO memberDTO = new MemberDTO();
 	HashMap<String, Object> memberMap = new HashMap<String, Object>();
 	
-	
-	memberDTO.setMember_type(member_type);
-	memberDTO.setMember_name(member_name);
-	memberDTO.setMember_id(member_id);
-	memberDTO.setMember_email(member_email);
 	
 	memberMap.put("member_type", member_type);
 	memberMap.put("member_name", member_name);
@@ -58,14 +53,13 @@
 		member_pw = commonDAO.encryptSHA256(member_pw);
 	}
 	
-	memberDTO.setMember_pw(member_pw);
 	memberMap.put("member_pw", member_pw);
 	
 	//DAO
-	MemberDAO memberDAO = new MemberDAO();
+	BaseDAO baseDAO = new BaseDAO();
 	
 	int result = 0;	
-	int chkMember = memberDAO.chkMember(memberMap);
+	int chkMember = (int) baseDAO.selectOne("Member.chkMember", memberMap);
 	
 	//ID 중복체크
 	if(member_name.equals("") && !member_id.equals("")){
@@ -91,13 +85,15 @@
 		}else{
 			//등록 성공시
 			int set_result = 0;
-			set_result = memberDAO.setMember(memberDTO);
+			set_result = (int) baseDAO.insert("Member.setMember", memberMap);
 			if(set_result == 1){
 				isOk = "Y";
 				msg = "등록에 성공하였습니다.";
 				response.sendRedirect("login.jsp?isOk=" + isOk);
 			}else{
-				
+				isOk = "N";
+				msg = "등록에 실패하였습니다.";
+				response.sendRedirect("login.jsp?isOk=" + isOk);
 			}
 		}
 	}

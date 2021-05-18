@@ -1,11 +1,10 @@
+<%@page import="java.util.Map"%>
 <%@page import="dao.common.BaseDAO"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="dao.common.PagingUtil"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="dao.webtoon.WebtoonDAO"%>
-<%@page import="dao.webtoon.WebtoonDTO"%>
 <%@ include file="/views/inc/common.jsp"%>
 <%	
 	String session_login_id = "";
@@ -25,8 +24,7 @@
 	
 	//DTO, DAO
 	BaseDAO baseDAO = new BaseDAO();
-	WebtoonDAO webtoonDAO = new WebtoonDAO();
-	HashMap<String, Object> param = new HashMap<String, Object>();
+	Map<String, Object> param = new HashMap<String, Object>();
 	
 	//search
 	String skey = "";
@@ -54,7 +52,7 @@
 
 	PagingUtil pagingUtil = new PagingUtil();
 	
-	int totalCount = webtoonDAO.getTotalCount(param);
+	int totalCount = (int) baseDAO.selectOne("Webtoon.getTotalCount", param);
 	
 	param = pagingUtil.paging(pg, pp, totalCount);
 	
@@ -70,10 +68,9 @@
 	param.put("endRow", endRow);
 	
 	
-	
 	//List
-	List<HashMap<String, Object>> thisList = new ArrayList<HashMap<String, Object>>();
-	thisList = webtoonDAO.getWebtoonList(param);
+	List<Map<String, Object>> thisList = new ArrayList<Map<String, Object>>();
+	thisList = (List<Map<String, Object>>) baseDAO.selectList("Webtoon.getWebtoonList", param);
 	
 	//isOk, msg
 	String isOk = "";
@@ -263,7 +260,7 @@ text-decoration:none;
                             <thead>
                                 <tr>
                                 <th><span>글 번호</span></th>
-                                <th><span>썸네일</span></th>
+<!--                                 <th><span>썸네일</span></th> -->
                                 <th><span>제목</span></th>
                                 <th><span>등록일</span></th>
                                 <th><span>작성자</span></th>
@@ -274,12 +271,12 @@ text-decoration:none;
                             <tbody>
 <%
 	for(int i=0; i<thisList.size(); i++){
-		HashMap<String, Object> row = new HashMap<String, Object>();
+		Map<String, Object> row = new HashMap<String, Object>();
 		row = thisList.get(i);
 %>                            
 	                                <tr>
 	                                    <td><%=row.get("RNUM") %></td>
-	                                    <td>
+	   <%--                                  <td>
 <%
 	if(row.get("SV_NAME") != null){
 %>		                                    
@@ -289,7 +286,7 @@ text-decoration:none;
 <%
 	}
 %>		                                    	 
-	                                    </td>
+	                                    </td> --%>
 	                                    <td><a href="javascript:void(0)" class="" onclick="loc_write('<%=row.get("WEBTOON_IDX") %>');"><%=row.get("WEBTOON_TITLE") %></a></td>
 	                                    <td><%=row.get("IN_DATE_STR") %></td>
 	                                    <td><%=row.get("WEBTOON_AUTHOR")%></td>

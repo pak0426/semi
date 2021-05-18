@@ -1,3 +1,4 @@
+<%@page import="dao.common.BaseDAO"%>
 <%@page import="dao.reply.ReplyDAO"%>
 <%@page import="dao.reply.ReplyDTO"%>
 <%@page import="java.io.PrintWriter"%>
@@ -23,7 +24,7 @@
 	request.setCharacterEncoding("UTF-8");	
 	
 	ReplyDTO replyDTO = null;
-	ReplyDAO replyDAO = null;
+	BaseDAO baseDAO = null;
 	
 	String reply_act = "";
 	
@@ -71,7 +72,7 @@
 	}
 	
 	if(reply_act.equals("I")){
-		replyDAO = new ReplyDAO();
+		baseDAO = new BaseDAO();
 		replyDTO = new ReplyDTO();
 		
 		if(pa_idx.equals("") || reply_content.equals("") || in_admin.equals("")){
@@ -82,21 +83,21 @@
 		}
 		
 		int nextval = 0;
-		nextval = replyDAO.replyNextVal();
+		nextval = (int) baseDAO.selectOne("Reply.replyNextVal", null);
 		
 // 		replyDTO.setReply_idx(nextval);
 // 		replyDTO.setPa_idx(Integer.parseInt(pa_idx));
 // 		replyDTO.setReply_content(reply_content);
 // 		replyDTO.setIn_admin(in_admin);
 
-		HashMap<String, Object> setParam = new HashMap<String, Object>();
+		Map<String, Object> setParam = new HashMap<String, Object>();
 		setParam.put("nextval", nextval);
 		setParam.put("pa_idx", pa_idx);
 		setParam.put("reply_content", reply_content);
 		setParam.put("in_admin", in_admin);
 		
 		int result = 0;
-		result = replyDAO.setReply(setParam);
+		result = (int) baseDAO.insert("Reply.setReply", setParam);
 		
 		if(result == 1){
 			isOk = "Y";
@@ -111,7 +112,7 @@
 		}
 	}
 	else if(reply_act.equals("U")){
-		replyDAO = new ReplyDAO();
+		baseDAO = new BaseDAO();
 		
 		if(reply_idx.equals("") || hidden_reply_content.equals("") || in_admin.equals("")){
 			isOk = "N";
@@ -122,13 +123,13 @@
 		
 		hidden_reply_content = hidden_reply_content.replaceAll("&nbsp", " ");
 		
-		HashMap<String, Object> param = new HashMap<String, Object>();
+		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("reply_idx", reply_idx);
 		param.put("reply_content", hidden_reply_content);
 		param.put("up_admin", in_admin);
 		
 		int result = 0;
-		result = replyDAO.modReply(param);
+		result = (int) baseDAO.update("Reply.modReply", param);
 		
 		if(result == 1){
 			isOk = "Y";
@@ -143,7 +144,7 @@
 		}
 	}
 	else if(reply_act.equals("D")){
-		replyDAO = new ReplyDAO();
+		baseDAO = new BaseDAO();
 		
 		if(reply_idx.equals("")){
 			isOk = "N";
@@ -152,11 +153,11 @@
 		 	return;
 		}
 		
-		HashMap<String, Object> param = new HashMap<String, Object>();
+		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("reply_idx", reply_idx);
 		
 		int result = 0;
-		result = replyDAO.delReply(param);
+		result = (int) baseDAO.delete("Reply.delReply", param);
 		
 		if(result == 1){
 			isOk = "Y";
@@ -171,7 +172,7 @@
 		}
 	}
 	if(reply_act.equals("A")){
-		replyDAO = new ReplyDAO();
+		baseDAO = new BaseDAO();
 		
 		if(reply_idx.equals("") || in_admin.equals("") || agree_type.equals("")){
 			isOk = "N";
@@ -181,16 +182,16 @@
 		}
 		
 		int nextval = 0;
-		nextval = replyDAO.agreeNextVal();
+		nextval = (int) baseDAO.selectOne("Reply.agreeNextVal", null);
 
-		HashMap<String, Object> setParam = new HashMap<String, Object>();
+		Map<String, Object> setParam = new HashMap<String, Object>();
 		setParam.put("nextval", nextval);
 		setParam.put("reply_idx", reply_idx);
 		setParam.put("in_admin", in_admin);
 		setParam.put("type", agree_type);
 		
 		int result = 0;
-		result = replyDAO.setAgree(setParam);
+		result = (int) baseDAO.insert("Reply.setAgree", setParam);
 		
 		if(result == 1){
 			isOk = "Y";
